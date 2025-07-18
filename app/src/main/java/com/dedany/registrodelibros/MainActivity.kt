@@ -16,6 +16,7 @@ import com.dedany.registrodelibros.ui.theme.RegistrodelibrosTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        throw RuntimeException("Crash de prueba para Firebase Crashlytics")
         enableEdgeToEdge()
         setContent {
             RegistrodelibrosTheme {
