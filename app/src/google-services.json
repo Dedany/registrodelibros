@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "171084013513",
+    "project_id": "registrodelibros2025",
+    "storage_bucket": "registrodelibros2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171084013513:android:6dee657d3a2368d6b51218",
+        "android_client_info": {
+          "package_name": "com.dedany.registrodelibros"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuLj62Hjxbbz8lfBbV4jjhnKhYvgb0ZlA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
