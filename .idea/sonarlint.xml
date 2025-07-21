@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SonarLintProjectSettings">
+    <option name="moduleMapping">
+      <map>
+        <entry key="registrodelibros.Data" value="registrodelibros.Data" />
+        <entry key="registrodelibros.Data.main" value="registrodelibros.data.main" />
+        <entry key="registrodelibros.Data.test" value="registrodelibros.data.test" />
+      </map>
+    </option>
+  </component>
+</project>
