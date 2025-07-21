@@ -1,5 +1,7 @@
 package com.dperez.data.datasource.remote.dto
 
+import com.google.gson.annotations.SerializedName
+
 
 data class BookDto (
     @SerializedName("title") val title: String?,
