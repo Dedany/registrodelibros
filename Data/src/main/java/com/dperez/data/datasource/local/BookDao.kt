@@ -14,7 +14,7 @@ interface BookDao {
     suspend fun getAllBooks(): List<BookDbo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertBook(book: BookDbo)
+    suspend fun saveBook(book: BookDbo)
 
     @Delete
     suspend fun deleteBook(book: BookDbo)

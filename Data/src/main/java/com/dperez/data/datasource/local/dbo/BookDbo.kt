@@ -11,4 +11,6 @@ data class BookDbo(
     val author: List<String>?,
     val coverId: Int?,
     val publishYear: Int?,
+    val rating: Int = 0,
+    val isRead: Boolean = false
 )
