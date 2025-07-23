@@ -1,4 +1,4 @@
-package com.dperez.data.datasource.local
+package com.dperez.data.datasource.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -15,6 +15,12 @@ interface BookDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveBook(book: BookDbo)
+
+    @Query("UPDATE books SET isFavorite = :isFavorite WHERE id = :bookId")
+    suspend fun setBookFavorite(bookId: String, isFavorite: Boolean)
+
+    @Query("SELECT * FROM books WHERE isFavorite = 1")
+    suspend fun getFavoriteBooks(): List<BookDbo>
 
     @Delete
     suspend fun deleteBook(book: BookDbo)
