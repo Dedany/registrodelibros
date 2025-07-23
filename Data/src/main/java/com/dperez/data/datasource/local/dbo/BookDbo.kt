@@ -6,11 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "books")
 data class BookDbo(
-   @PrimaryKey val id: String,
+    @PrimaryKey val id: String,
     val title: String?,
     val author: List<String>?,
     val coverId: Int?,
     val publishYear: Int?,
     val rating: Int = 0,
-    val isRead: Boolean = false
+    val isRead: Boolean = false,
+    val isFavorite: Boolean = false
 )
