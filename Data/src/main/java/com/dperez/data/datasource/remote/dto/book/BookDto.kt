@@ -1,4 +1,4 @@
-package com.dperez.data.datasource.remote.dto
+package com.dperez.data.datasource.remote.dto.book
 
 import com.google.gson.annotations.SerializedName
 
