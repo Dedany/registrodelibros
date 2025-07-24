@@ -1,8 +1,8 @@
-package com.dperez.data
+package com.dperez.data.mapper
 
 import com.dedany.domain.entities.Book
 import com.dperez.data.datasource.local.dbo.BookDbo
-import com.dperez.data.datasource.remote.dto.BookDto
+import com.dperez.data.datasource.remote.dto.book.BookDto
 
 fun BookDbo.toDomain() : Book {
     return Book(
@@ -32,7 +32,7 @@ fun BookDbo.toDomain() : Book {
         )
     }
 
-fun BookDto.toDbo(): BookDbo{
+fun BookDto.toDbo(): BookDbo {
     return BookDbo(
         id = this.key ?: "",
         title = this.title,
@@ -41,3 +41,4 @@ fun BookDto.toDbo(): BookDbo{
         publishYear = this.publishYear,
     )
 }
+

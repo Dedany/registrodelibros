@@ -5,13 +5,25 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.dperez.data.datasource.local.converters.Converters
 import com.dperez.data.datasource.local.dbo.BookDbo
+import com.dperez.data.datasource.local.dao.AuthorDao
+import com.dperez.data.datasource.local.dbo.AuthorDbo
+import com.dperez.data.datasource.local.dao.BookDao
+import com.dperez.data.datasource.local.dbo.BookAuthorCrossRef
+import com.dperez.data.datasource.local.dao.BookAuthorDao
 
 @Database(
-    entities = [BookDbo::class],
+    entities = [
+        BookDbo::class,
+        AuthorDbo::class,
+        BookAuthorCrossRef::class
+    ],
     version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class BookDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
+    abstract fun authorDao(): AuthorDao
+    abstract fun bookAuthorDao(): BookAuthorDao
+
 }

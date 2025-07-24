@@ -1,0 +1,35 @@
+package com.dperez.data.datasource.remote.remotedatasource
+
+import com.dperez.data.datasource.remote.dto.author.AuthorSearchResponseDto
+import com.dperez.data.datasource.remote.dto.book.SearchResponseDto
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+
+interface OpenLibraryApi {
+
+    @GET("search.json")
+    suspend fun searchBooksByTitle(
+        @Query("title") title: String,
+        @Query("page") page: Int? = null
+    ): SearchResponseDto
+
+    @GET("search.json")
+    suspend fun searchBooksByAuthor(
+        @Query("author") author: String,
+        @Query("page") page: Int? = null,
+        @Query("sort") sort: String? = null // ej. "new"
+    ): SearchResponseDto
+
+    @GET("search.json")
+    suspend fun searchBooksByQuery(
+        @Query("q") query: String,
+        @Query("page") page: Int? = null
+    ): SearchResponseDto
+
+    @GET("search/authors.json")
+    suspend fun searchAuthors(
+        @Query("q") query: String
+    ): AuthorSearchResponseDto
+
+}

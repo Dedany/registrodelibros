@@ -17,7 +17,13 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.jvm)
+
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.retrofit2.kotlin.coroutines.adapter)
 }
+
 
 
 
