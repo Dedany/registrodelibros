@@ -1,4 +1,5 @@
-package com.dperez.data.datasource.remote.remotedatasource
+package com.dperez.data.datasource.remote.service
+
 
 import com.dperez.data.datasource.remote.dto.author.AuthorSearchResponseDto
 import com.dperez.data.datasource.remote.dto.book.SearchResponseDto
