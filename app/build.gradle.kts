@@ -74,5 +74,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
+    //retrofit
+    implementation(libs.retrofit)
 
 }
