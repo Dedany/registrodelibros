@@ -77,4 +77,8 @@ dependencies {
     //retrofit
     implementation(libs.retrofit)
 
+    //Gson
+    implementation(libs.converter.gson)
+
+
 }
