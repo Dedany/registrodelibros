@@ -14,6 +14,9 @@ interface BookDao {
     suspend fun getAllBooks(): List<BookDbo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveBooks(book: List<BookDbo>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveBook(book: BookDbo)
 
     @Query("UPDATE books SET isFavorite = :isFavorite WHERE id = :bookId")

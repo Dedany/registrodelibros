@@ -2,36 +2,51 @@ package com.dperez.data.repository
 
 import com.dedany.domain.entities.Author
 import com.dedany.domain.repository.AuthorRepository
-import com.dperez.data.datasource.local.dao.AuthorDao
+import com.dperez.data.datasource.local.localdatasource.AuthorLocalDataSource
+import com.dperez.data.datasource.remote.remotedatasource.AuthorRemoteDataSource
 import com.dperez.data.mapper.toDbo
 import com.dperez.data.mapper.toDomain
+import javax.inject.Inject
 
 
-class AuthorRepositoryImpl(
-    private val authorDao: AuthorDao
+class AuthorRepositoryImpl @Inject constructor(
+    private val authorLocalDataSource: AuthorLocalDataSource,
+    private val authorRemoteDataSource: AuthorRemoteDataSource
 ) : AuthorRepository {
+
     override suspend fun getAllAuthors(): List<Author> {
-        return authorDao.getAllAuthors().map { it.toDomain() }
+        val localAuthors = authorLocalDataSource.getAllAuthors()
+        if (localAuthors.isNotEmpty()) {
+            return localAuthors.map { it.toDomain() }
+        }
+
+        val responseDto = authorRemoteDataSource.searchAuthors("")
+        val remoteAuthorsDto = responseDto.authors
+        val remoteAuthorsDbo = remoteAuthorsDto.map { it.toDbo() }
+
+        authorLocalDataSource.saveAuthors(remoteAuthorsDbo)
+
+        return authorLocalDataSource.getAllAuthors().map { it.toDomain() }
     }
 
     override suspend fun getAuthorById(id: String): Author? {
-        return authorDao.getAuthorById(id)?.toDomain()
+        return authorLocalDataSource.getAuthorById(id)?.toDomain()
     }
 
     override suspend fun saveAuthor(author: Author) {
-        authorDao.saveAuthor(author.toDbo())
+        authorLocalDataSource.saveAuthor(author.toDbo())
     }
 
     override suspend fun getAuthorsByName(name: String): List<Author> {
-        return authorDao.getAuthorsByName(name).map { it.toDomain() }
+        return authorLocalDataSource.getAuthorsByName(name).map { it.toDomain() }
     }
 
     override suspend fun setAuthorFavorite(authorId: String, isFavorite: Boolean) {
-        authorDao.setAuthorFavorite(authorId, isFavorite)
+        authorLocalDataSource.setAuthorFavorite(authorId, isFavorite)
     }
 
     override suspend fun getFavoriteAuthors(): List<Author> {
-        return authorDao.getFavoriteAuthors().map { it.toDomain() }
+        return authorLocalDataSource.getFavoriteAuthors().map { it.toDomain() }
 
     }
 }

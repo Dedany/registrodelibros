@@ -15,6 +15,9 @@ interface AuthorDao {
     suspend fun getAuthorById(authorId: String): AuthorDbo?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveAuthors(author: List<AuthorDbo>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAuthor(author: AuthorDbo)
 
     @Query("SELECT * FROM authors WHERE name LIKE '%' || :name || '%'")

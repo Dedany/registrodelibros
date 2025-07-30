@@ -8,6 +8,7 @@ class BookLocalDataSource @Inject constructor(
     private val bookDao: BookDao
 ) {
     suspend fun getAllBooks() = bookDao.getAllBooks()
+    suspend fun saveBooks(book: List<BookDbo>) = bookDao.saveBooks(book)
     suspend fun saveBook(book: BookDbo) = bookDao.saveBook(book)
     suspend fun setBookFavorite(bookId: String, isFavorite: Boolean) = bookDao.setBookFavorite(bookId, isFavorite)
     suspend fun getFavoriteBooks() = bookDao.getFavoriteBooks()
