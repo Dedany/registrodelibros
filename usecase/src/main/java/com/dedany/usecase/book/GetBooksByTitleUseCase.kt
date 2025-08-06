@@ -2,7 +2,8 @@ package com.dedany.usecase.book
 
 import com.dedany.domain.entities.Book
 import com.dedany.domain.repository.BookRepository
+import javax.inject.Inject
 
-class GetBooksByTitleUseCase(private val repository: BookRepository) {
+class GetBooksByTitleUseCase  @Inject constructor (private val repository: BookRepository) {
     suspend operator fun invoke(title: String): List<Book> = repository.getBooksByTitle(title)
 }

@@ -1,12 +1,13 @@
 package com.dperez.data.datasource.local.dao
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.dperez.data.datasource.local.dbo.AuthorDbo
 import com.dperez.data.datasource.local.dbo.BookDbo
 
-
+@Dao
 interface AuthorDao {
     @Query("SELECT * FROM authors")
     suspend fun getAllAuthors(): List<AuthorDbo>

@@ -13,4 +13,5 @@ kotlin {
 }
 dependencies {
     implementation(project(":domain"))
+    implementation(libs.javax.inject)
 }

@@ -7,13 +7,13 @@ import com.dperez.data.datasource.remote.dto.book.BookDto
 fun BookDbo.toDomain() : Book {
     return Book(
         id = this.id,
-        title = this.title ?: "Sin título",
-        author = this.author?.joinToString(", ") ?: "Autor desconocido",
-        coverUrl = "https://covers.openlibrary.org/b/id/${this.coverId}-M.jpg?default=false",
+        title = this.title,
+        author = this.author,
+        coverId = this.coverId,
         publishYear = this.publishYear,
         rating = this.rating,
-        isRead = this.isRead
-
+        isRead = this.isRead,
+        isFavorite = this.isFavorite
     )
 }
 
@@ -21,14 +21,12 @@ fun BookDbo.toDomain() : Book {
         return BookDbo(
             id = this.id,
             title = this.title,
-            author = this.author
-                .split(",")
-                .map { it.trim() },
-            coverId = this.coverUrl?.split("/")?.last()?.split("-")?.first()?.toInt(),
-            publishYear = null,
+            author = this.author,
+            coverId = this.coverId,
+            publishYear = this.publishYear,
             rating = this.rating,
-            isRead = this.isRead
-
+            isRead = this.isRead,
+            isFavorite = this.isFavorite
         )
     }
 

@@ -59,8 +59,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.room.runtime.android)
     implementation(libs.ads.mobile.sdk)
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,10 +69,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Import the Firebase BoM
-    implementation(libs.firebase.bom)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.analytics)
 
 //hilt
     implementation(libs.hilt.android.v250)
@@ -93,6 +89,11 @@ dependencies {
     //compose
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //coil
+    implementation(libs.coil.compose)
+
+    //navigation
+    implementation ("androidx.navigation:navigation-compose:2.5.3")
 
 
 }

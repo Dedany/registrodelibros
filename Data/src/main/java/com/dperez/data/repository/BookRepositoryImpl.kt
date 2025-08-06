@@ -20,14 +20,22 @@ class BookRepositoryImpl @Inject constructor(
             return localBooks.map { it.toDomain() }
         }
 
-        val responseDto = bookRemoteDataSource.searchBooksByTitle("")
-        val remoteBooksDto = responseDto.books
-        val remoteBooksDbo = remoteBooksDto.map { it.toDbo() }
+        return try {
+            val responseDto =
+                bookRemoteDataSource.searchBooksByTitle("a")
 
-        bookLocalDataSource.saveBooks(remoteBooksDbo)
+            val remoteBooksDto = responseDto.books.orEmpty()
+            if (remoteBooksDto.isEmpty()) return emptyList()
 
+            val remoteBooksDbo = remoteBooksDto.map { it.toDbo() }
+            bookLocalDataSource.saveBooks(remoteBooksDbo)
 
-        return bookLocalDataSource.getAllBooks().map { it.toDomain() }
+            bookLocalDataSource.getAllBooks().map { it.toDomain() }
+
+        } catch (e: Exception) {
+
+            emptyList()
+        }
     }
 
     override suspend fun saveBook(book: Book) {
@@ -57,6 +65,23 @@ class BookRepositoryImpl @Inject constructor(
 
 
     override suspend fun getBooksByTitle(title: String): List<Book> {
-        return bookLocalDataSource.getBooksByTitle(title).map { it.toDomain() }
+        val trimmedTitle = title.trim()
+
+        if (trimmedTitle.isEmpty()) {
+            return emptyList()
+        }
+
+        val localBooks = bookLocalDataSource.getBooksByTitle(trimmedTitle)
+        if (localBooks.isNotEmpty()) {
+            return localBooks.map { it.toDomain() }
+        }
+
+        val responseDto = bookRemoteDataSource.searchBooksByTitle(trimmedTitle)
+        val remoteBooksDto = responseDto.books
+        val remoteBooksDbo = remoteBooksDto.map { it.toDbo() }
+
+        bookLocalDataSource.saveBooks(remoteBooksDbo)
+
+        return bookLocalDataSource.getBooksByTitle(trimmedTitle).map { it.toDomain() }
     }
 }

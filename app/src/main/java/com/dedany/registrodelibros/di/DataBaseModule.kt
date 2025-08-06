@@ -30,11 +30,14 @@ object DataBaseModule {
     }
 
     @Provides
+    @Singleton
     fun provideBookDao(db: BookDatabase): BookDao = db.bookDao()
 
     @Provides
+    @Singleton
     fun provideAuthorDao(db: BookDatabase): AuthorDao = db.authorDao()
 
     @Provides
+    @Singleton
     fun provideBookAuthorDao(db: BookDatabase): BookAuthorDao = db.bookAuthorDao()
 }

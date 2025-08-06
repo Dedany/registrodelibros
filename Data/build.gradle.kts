@@ -28,13 +28,18 @@ plugins {
 dependencies {
     implementation(project(":domain"))
     implementation(libs.gson)
-    implementation(libs.androidx.room.common.jvm)
-    implementation(libs.androidx.room.runtime.jvm)
+   
 
     //retrofit
-    implementation(libs.retrofit.v290)
+    implementation(libs.retrofit)
     implementation(libs.converter.gson)
-    implementation(libs.retrofit2.kotlin.coroutines.adapter)
+
+    //room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+
 
     //Dagger Hilt
     implementation(libs.hilt.android.v250)

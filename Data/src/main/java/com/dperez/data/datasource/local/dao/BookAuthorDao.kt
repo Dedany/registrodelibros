@@ -1,5 +1,6 @@
 package com.dperez.data.datasource.local.dao
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -8,6 +9,7 @@ import com.dperez.data.datasource.local.dbo.AuthorWithBooks
 import com.dperez.data.datasource.local.dbo.BookAuthorCrossRef
 import com.dperez.data.datasource.local.dbo.BookWithAuthors
 
+@Dao
 interface BookAuthorDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCrossRef(crossRef: BookAuthorCrossRef)
