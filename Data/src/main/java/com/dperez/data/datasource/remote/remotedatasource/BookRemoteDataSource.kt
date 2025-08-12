@@ -1,5 +1,7 @@
 package com.dperez.data.datasource.remote.remotedatasource
 
+import com.dperez.data.datasource.remote.dto.book.BookDetailDto
+import com.dperez.data.datasource.remote.dto.book.BookDto
 import com.dperez.data.datasource.remote.dto.book.SearchResponseDto
 import com.dperez.data.datasource.remote.service.OpenLibraryApi
 import javax.inject.Inject
@@ -21,6 +23,9 @@ class BookRemoteDataSource @Inject constructor(
 
     suspend fun searchBooksByQuery(query: String, page: Int? = null): SearchResponseDto {
         return api.searchBooksByQuery(query, page)
+    }
+    suspend fun getBookById(bookId: String): BookDetailDto {
+        return api.getBookById(bookId)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.dedany.registrodelibros.ui.viewmodel
+package com.dedany.registrodelibros.ui.screens.booksAuthors
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

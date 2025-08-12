@@ -1,14 +1,14 @@
-package com.dedany.registrodelibros.ui.screens
+package com.dedany.registrodelibros.ui.screens.book
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,56 +29,81 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.dedany.registrodelibros.ui.viewmodel.BooksWithAuthorsViewModel
+import com.dedany.registrodelibros.ui.screens.booksAuthors.BooksWithAuthorsViewModel
 
 @Composable
 fun BookDetailScreen(
     bookId: String,
     navController: NavController,
-    viewModel: BooksWithAuthorsViewModel = hiltViewModel()
+    viewModel: BookDetailViewModel = hiltViewModel()
 ) {
-
-
-    val books by viewModel.books.collectAsState()
-    val book = books.find { it.id == bookId }
+    val scrollState = rememberScrollState()
+    val book by viewModel.book.collectAsState()
 
     LaunchedEffect(bookId) {
         viewModel.loadBookById(bookId)
     }
 
-    book?.let {
+    if (book != null) {
+        val b = book!!
+
         Column(
             modifier = Modifier
+                .verticalScroll(scrollState)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = book.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
-                contentDescription = "Portada de ${book.title ?: "Libro"}",
+                model = b.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
+                contentDescription = "Portada de ${b.title ?: "Libro"}",
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
-                    .fillMaxWidth()
                     .aspectRatio(2f / 3f)
                     .clip(RoundedCornerShape(12.dp))
                     .padding(top = 32.dp),
                 contentScale = ContentScale.Crop
             )
 
-            BookDetailText(text = it.title ?: "Sin título")
-            it.author?.let { authors ->
+            BookDetailText(text = b.title ?: "Sin título")
+
+            b.author?.let { authors ->
                 AuthorsClickableText(
                     authors = authors,
                     onAuthorClick = { authorName ->
-                        // Aquí puedes navegar o filtrar por el autor
-                        navController.navigate("autores") // o con parámetro: "autores/$authorName"
+                        navController.navigate("autores")
                     }
                 )
             } ?: BookDetailText(text = "Autor desconocido")
-            BookDetailText(text = "Publicado en: ${it.publishYear ?: "Desconocido"}")
-            BookDetailText(text = if (it.isFavorite) "❤️ Favorito" else "🤍 No es favorito")
+
+            BookDetailText(text = "Publicado en: ${b.publishYear ?: "Desconocido"}")
+
+            // Aquí añadimos la descripción
+            BookDetailText(
+                text = b.description ?: "Sin descripción",
+                modifier = Modifier.padding(top = 16.dp),
+                color = androidx.compose.ui.graphics.Color.DarkGray
+            )
+
+            // Mostrar estado favorito, leído y rating
+            BookDetailText(
+                text = if (b.isFavorite) "❤️ Favorito" else "🤍 No es favorito",
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            BookDetailText(
+                text = if (b.isRead) "📖 Leído" else "📕 No leído",
+                modifier = Modifier.padding(top = 4.dp)
+            )
+            BookDetailText(
+                text = "⭐ Puntuación: ${b.rating}",
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
-    } ?: Text("Cargando...")
+    } else {
+        Text("Cargando...")
+    }
 }
+
+
 
 @Composable
 fun BookDetailText(

@@ -1,4 +1,4 @@
-package com.dedany.registrodelibros.ui.screens
+package com.dedany.registrodelibros.ui.screens.booksAuthors
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,7 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.dedany.registrodelibros.ui.viewmodel.BooksWithAuthorsViewModel
 
 
 @Composable

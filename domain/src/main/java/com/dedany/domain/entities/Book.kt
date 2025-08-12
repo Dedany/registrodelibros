@@ -6,7 +6,11 @@ data class Book(
     val author: List<String>?,
     val coverId: Int?,
     val publishYear: Int?,
+    val description: String?,
+    val subjectPlaces: List<String>?,
+    val subjectPeople: List<String>?,
+    val subjectTimes: List<String>?,
     val rating: Int = 0,
     val isRead: Boolean = false,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
 )

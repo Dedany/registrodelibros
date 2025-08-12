@@ -5,7 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.dperez.data.datasource.local.dbo.BookDbo
+import com.dperez.data.datasource.local.dbo.BookDetailDbo
 
 @Dao
 interface BookDao {
@@ -36,4 +38,8 @@ interface BookDao {
 
     @Query("SELECT * FROM books WHERE title LIKE '%' || :title || '%'")
     suspend fun getBooksByTitle(title: String): List<BookDbo>
+
+    @Transaction
+    @Query("SELECT * FROM books WHERE id = :id")
+    suspend fun getBookDetailById(id: String): BookDetailDbo?
 }

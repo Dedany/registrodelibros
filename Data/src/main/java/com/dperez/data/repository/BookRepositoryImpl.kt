@@ -1,12 +1,17 @@
 package com.dperez.data.repository
 
+import android.util.Log
 import com.dedany.domain.entities.Book
 import com.dedany.domain.repository.BookRepository
 import com.dperez.data.datasource.local.dao.BookDao
+import com.dperez.data.datasource.local.dbo.BookDbo
 import com.dperez.data.datasource.local.localdatasource.BookLocalDataSource
+import com.dperez.data.datasource.remote.dto.book.BookDetailDto
+import com.dperez.data.datasource.remote.dto.book.BookDto
 import com.dperez.data.datasource.remote.remotedatasource.BookRemoteDataSource
 import com.dperez.data.mapper.toDomain
 import com.dperez.data.mapper.toDbo
+import com.dperez.data.mapper.toDboMerging
 import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor(
@@ -51,9 +56,44 @@ class BookRepositoryImpl @Inject constructor(
     }
 
 
+    // En BookRepositoryImpl.getBookById
     override suspend fun getBookById(id: String): Book? {
-        return bookLocalDataSource.getBookById(id)?.toDomain()
+        val localBookDbo = bookLocalDataSource.getBookById(id)
+
+        if (localBookDbo?.description != null && localBookDbo.description.isNotEmpty()) {
+            Log.d("BookRepository", "Book with ID $id found in local cache with description.")
+            return localBookDbo.toDomain()
+        }
+
+        return try {
+            val logMessage = if (localBookDbo == null) {
+                "Book with ID $id not found locally, fetching from remote."
+            } else {
+                "Book with ID $id found locally but description is missing/empty, fetching details from remote."
+            }
+            Log.d("BookRepository", logMessage)
+
+            val apiCompatibleId = id.substringAfterLast('/')
+            Log.d("BookRepository", "Original ID for API call: $id, Using API Compatible ID: $apiCompatibleId")
+            val remoteBookDetailDto: BookDetailDto? = bookRemoteDataSource.getBookById(apiCompatibleId)
+
+            if (remoteBookDetailDto != null) {
+                // AQUÍ ESTÁ EL CAMBIO IMPORTANTE:
+                // Usamos el localBookDbo (si existe) como base para la fusión.
+                val updatedBookDbo = remoteBookDetailDto.toDboMerging(localBookDbo)
+                bookLocalDataSource.saveBook(updatedBookDbo)
+                Log.d("BookRepository", "Saved updated DBO for ID $id: $updatedBookDbo")
+                updatedBookDbo.toDomain()
+            } else {
+                Log.w("BookRepository", "Book with ID $id not found in remote either.")
+                localBookDbo?.toDomain() // Devuelve el DBO local si no se encontró en remoto
+            }
+        } catch (e: Exception) {
+            Log.e("BookRepository", "Error fetching book by ID $id from remote: ${e.message}", e)
+            localBookDbo?.toDomain() // Devuelve el DBO local en caso de error
+        }
     }
+
 
     override suspend fun getBooksByAuthor(author: String): List<Book> {
         return bookLocalDataSource.getBooksByAuthor(author).map { it.toDomain() }
