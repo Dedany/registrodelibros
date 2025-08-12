@@ -9,8 +9,6 @@ import com.dperez.data.datasource.local.dbo.BookDbo
 
 @Dao
 interface AuthorDao {
-    @Query("SELECT * FROM authors")
-    suspend fun getAllAuthors(): List<AuthorDbo>
 
     @Query("SELECT * FROM authors WHERE id = :authorId")
     suspend fun getAuthorById(authorId: String): AuthorDbo?

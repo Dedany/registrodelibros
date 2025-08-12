@@ -7,7 +7,6 @@ import javax.inject.Inject
 class AuthorLocalDataSource @Inject constructor(
 private val authorDao: AuthorDao
 ) {
-    suspend fun getAllAuthors() = authorDao.getAllAuthors()
     suspend fun getAuthorById(id: String) = authorDao.getAuthorById(id)
     suspend fun saveAuthors(author: List<AuthorDbo>) = authorDao.saveAuthors(author)
     suspend fun saveAuthor(author: AuthorDbo) = authorDao.saveAuthor(author)

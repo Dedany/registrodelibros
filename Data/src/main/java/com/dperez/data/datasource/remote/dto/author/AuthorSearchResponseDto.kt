@@ -8,3 +8,8 @@ data class AuthorSearchResponseDto(
     @SerializedName("numFoundExact") val numFoundExact: Boolean,
     @SerializedName("docs") val authors: List<AuthorDto>
 )
+
+sealed class BioField {
+    data class BioValue(val value: String): BioField()
+    data class BioString(val bioString: String): BioField()
+}

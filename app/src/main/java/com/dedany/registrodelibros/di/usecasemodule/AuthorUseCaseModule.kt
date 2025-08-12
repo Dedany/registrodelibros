@@ -1,7 +1,6 @@
 package com.dedany.registrodelibros.di.usecasemodule
 
 import com.dedany.domain.repository.AuthorRepository
-import com.dedany.usecase.author.GetAllAuthorsUseCase
 import com.dedany.usecase.author.GetAuthorByIdUseCase
 import com.dedany.usecase.author.GetAuthorsByNameUseCase
 import com.dedany.usecase.author.GetFavoriteAuthorsUseCase
@@ -17,12 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthorUseCaseModule {
-
-    @Provides
-    @Singleton
-    fun provideGetAllAuthorsUseCase(repository: AuthorRepository): GetAllAuthorsUseCase {
-        return GetAllAuthorsUseCase(repository)
-    }
 
     @Provides
     @Singleton

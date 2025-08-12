@@ -12,6 +12,7 @@ data class AuthorDbo (
     val workCount: Int?,
     val alternateNames: List<String>?,
     val topSubjects: List<String>?,
+    val bio: String?,
     val isFavorite: Boolean = false
 
 )
