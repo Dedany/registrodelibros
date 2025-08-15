@@ -14,7 +14,7 @@ interface AuthorDao {
     suspend fun getAuthorById(authorId: String): AuthorDbo?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveAuthors(author: List<AuthorDbo>)
+    suspend fun saveAuthors(authors: List<AuthorDbo>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAuthor(author: AuthorDbo)

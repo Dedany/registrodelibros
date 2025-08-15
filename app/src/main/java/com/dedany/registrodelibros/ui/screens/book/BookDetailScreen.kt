@@ -29,7 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.dedany.registrodelibros.ui.screens.booksAuthors.BooksWithAuthorsViewModel
+import com.dedany.domain.entities.Author
+import com.dedany.domain.entities.Book
+import com.dedany.domain.entities.BookWithAuthors
+
 
 @Composable
 fun BookDetailScreen(
@@ -38,14 +41,18 @@ fun BookDetailScreen(
     viewModel: BookDetailViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
-    val book by viewModel.book.collectAsState()
+    val bookWithAuthorsData: BookWithAuthors? by viewModel.book.collectAsState()
 
     LaunchedEffect(bookId) {
         viewModel.loadBookById(bookId)
     }
 
-    if (book != null) {
-        val b = book!!
+    val currentBookDetails = bookWithAuthorsData
+
+    if (currentBookDetails != null) {
+        val bookEntity: Book = currentBookDetails.book // Accede a la entidad Book interna
+        val authorsList: List<Author> = currentBookDetails.authors // Accede a la lista de Author interna
+
 
         Column(
             modifier = Modifier
@@ -54,8 +61,8 @@ fun BookDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = b.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
-                contentDescription = "Portada de ${b.title ?: "Libro"}",
+                model = bookEntity.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
+                contentDescription = "Portada de ${bookEntity.title ?: "Libro"}",
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .aspectRatio(2f / 3f)
@@ -64,37 +71,39 @@ fun BookDetailScreen(
                 contentScale = ContentScale.Crop
             )
 
-            BookDetailText(text = b.title ?: "Sin título")
+            BookDetailText(text = bookEntity.title ?: "Sin título")
 
-            b.author?.let { authors ->
+            if (authorsList.isNotEmpty()) {
                 AuthorsClickableText(
-                    authors = authors,
+                    authors = authorsList.mapNotNull { it.name },
                     onAuthorClick = { authorName ->
                         navController.navigate("autores")
                     }
                 )
-            } ?: BookDetailText(text = "Autor desconocido")
+            }else {
+                BookDetailText(text = "Autor desconocido")
+            }
 
-            BookDetailText(text = "Publicado en: ${b.publishYear ?: "Desconocido"}")
+            BookDetailText(text = "Publicado en: ${bookEntity.publishYear ?: "Desconocido"}")
 
             // Aquí añadimos la descripción
             BookDetailText(
-                text = b.description ?: "Sin descripción",
+                text = bookEntity.description ?: "Sin descripción",
                 modifier = Modifier.padding(top = 16.dp),
                 color = androidx.compose.ui.graphics.Color.DarkGray
             )
 
             // Mostrar estado favorito, leído y rating
             BookDetailText(
-                text = if (b.isFavorite) "❤️ Favorito" else "🤍 No es favorito",
+                text = if (bookEntity.isFavorite) "❤️ Favorito" else "🤍 No es favorito",
                 modifier = Modifier.padding(top = 16.dp)
             )
             BookDetailText(
-                text = if (b.isRead) "📖 Leído" else "📕 No leído",
+                text = if (bookEntity.isRead) "📖 Leído" else "📕 No leído",
                 modifier = Modifier.padding(top = 4.dp)
             )
             BookDetailText(
-                text = "⭐ Puntuación: ${b.rating}",
+                text = "⭐ Puntuación: ${bookEntity.rating}",
                 modifier = Modifier.padding(top = 4.dp)
             )
         }

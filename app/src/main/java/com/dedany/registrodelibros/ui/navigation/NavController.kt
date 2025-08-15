@@ -9,9 +9,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.dedany.registrodelibros.ui.screens.BookDetailScreen
-import com.dedany.registrodelibros.ui.screens.BooksScreen
-import com.dedany.registrodelibros.ui.viewmodel.BooksViewModel
+import com.dedany.registrodelibros.ui.screens.book.BookDetailScreen
+import com.dedany.registrodelibros.ui.screens.book.BooksScreen
+import com.dedany.registrodelibros.ui.screens.author.AuthorsViewModel
+import com.dedany.registrodelibros.ui.screens.book.BooksViewModel
+import com.dedany.registrodelibros.ui.screens.author.AuthorsScreen
+import com.dedany.registrodelibros.ui.screens.author.AuthorDetailScreen
+
 
 @Composable
 fun AppNavigation() {
@@ -40,7 +44,25 @@ fun AppNavigation() {
         ) { backStackEntry ->
             val encodedId = backStackEntry.arguments?.getString("bookId") ?: ""
             val decodedId = Uri.decode(encodedId)
-            BookDetailScreen(bookId = decodedId,navController=navController)
+            BookDetailScreen(bookId = decodedId, navController = navController)
+        }
+
+
+        composable("autores") {
+            val authorsViewModel = hiltViewModel<AuthorsViewModel>()
+            AuthorsScreen(viewModel = authorsViewModel, navController = navController)
+        }
+
+        composable(
+            "authorDetail/{authorId}",
+            arguments = listOf(navArgument("authorId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val encodedId = backStackEntry.arguments?.getString("authorId") ?: ""
+            val decodedId = Uri.decode(encodedId)
+            AuthorDetailScreen(
+                authorId = decodedId,
+                navController = navController
+            )
         }
     }
 }

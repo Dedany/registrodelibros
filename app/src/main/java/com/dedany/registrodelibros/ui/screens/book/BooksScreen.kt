@@ -68,8 +68,6 @@ fun BooksScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(books) { book ->
-                val safeId = book.id.removePrefix("/") // ✅ Limpieza del ID aquí
-                Log.d("BooksScreen", "Navigating with safeId: $safeId")
                 BookItem(book = book) {
                     val safeId = Uri.encode(book.id)
                     navController.navigate("bookDetail/$safeId")
@@ -107,11 +105,6 @@ fun BookItem(
             Text(
                 text = book.title ?: "Sin título",
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 1
-            )
-            Text(
-                text = book.author?.joinToString(", ") ?: "Autor desconocido",
-                style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1
             )
         }

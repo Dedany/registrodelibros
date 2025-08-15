@@ -16,7 +16,7 @@ interface BookDao {
     suspend fun getAllBooks(): List<BookDbo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveBooks(book: List<BookDbo>)
+    suspend fun saveBooks(books: List<BookDbo>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveBook(book: BookDbo)
@@ -33,13 +33,7 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE id = :bookId")
     suspend fun getBookById(bookId: String): BookDbo?
 
-    @Query("SELECT * FROM books WHERE author LIKE '%' || :author || '%'")
-    suspend fun getBooksByAuthor(author: String): List<BookDbo>
-
     @Query("SELECT * FROM books WHERE title LIKE '%' || :title || '%'")
     suspend fun getBooksByTitle(title: String): List<BookDbo>
 
-    @Transaction
-    @Query("SELECT * FROM books WHERE id = :id")
-    suspend fun getBookDetailById(id: String): BookDetailDbo?
 }

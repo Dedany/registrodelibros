@@ -19,7 +19,7 @@ class AuthorRepositoryImpl @Inject constructor(
 ) : AuthorRepository {
 
     override suspend fun getAuthorById(id: String): Author? { // Author es tu entidad de dominio
-        Log.d("AuthorRepo", "getAuthorById called for ID: $id")
+        Log.i("dani", "la llamada es  ID: $id")
         val localAuthorDbo: AuthorDbo? = authorLocalDataSource.getAuthorById(id)
         Log.d("AuthorRepo", "Local AuthorDbo for ID $id: $localAuthorDbo")
         Log.d("AuthorRepo", "Local AuthorDbo bio: ${localAuthorDbo?.bio}")

@@ -1,16 +1,18 @@
 package com.dperez.data.repository
 
+import android.util.Log
 import com.dedany.domain.entities.AuthorWithBooks
 import com.dedany.domain.entities.BookWithAuthors
 import com.dedany.domain.repository.BookAuthorRepository
 import com.dperez.data.datasource.local.dbo.BookAuthorCrossRef
+import com.dperez.data.datasource.local.localdatasource.AuthorLocalDataSource
 import com.dperez.data.datasource.local.localdatasource.BookAuthorLocalDataSource
 import com.dperez.data.mapper.toDomain
 import javax.inject.Inject
 
 class BookAuthorRepositoryImpl @Inject constructor(
-    private val bookAuthorLocalDataSource: BookAuthorLocalDataSource
-): BookAuthorRepository {
+    private val bookAuthorLocalDataSource: BookAuthorLocalDataSource,
+) : BookAuthorRepository {
 
     override suspend fun insertCrossRef(bookId: String, authorId: String) {
         bookAuthorLocalDataSource.insertCrossRef(BookAuthorCrossRef(bookId, authorId))
@@ -22,11 +24,27 @@ class BookAuthorRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getBookWithAuthors(bookId: String): BookWithAuthors {
-        return bookAuthorLocalDataSource.getBookWithAuthors(bookId).toDomain()
+    override suspend fun getBookWithAuthors(bookId: String): BookWithAuthors?{
+        Log.d("RepoDebug", "getBookWithAuthors - Requesting bookId: $bookId")
+        val bookWithAuthorsDbo = bookAuthorLocalDataSource.getBookWithAuthors(bookId)
+        Log.d("RepoDebug", "getBookWithAuthors - DBO from DataSource: $bookWithAuthorsDbo")
+        if (bookWithAuthorsDbo != null) {
+            Log.d(
+                "RepoDebug",
+                "DBO Authors: ${bookWithAuthorsDbo.authors.joinToString { it.toString() }}"
+            )
+        }
+        val domainObject = bookWithAuthorsDbo?.toDomain()
+        Log.d("RepoDebug", "getBookWithAuthors - Domain object: $domainObject")
+        if (domainObject != null) {
+            Log.d("RepoDebug", "Domain Authors: ${domainObject.authors.joinToString { it.name ?: "Nombre Nulo" }}")
+        }
+        return domainObject
+
     }
 
-    override suspend fun getAuthorWithBooks(authorId: String): AuthorWithBooks {
-        return bookAuthorLocalDataSource.getAuthorWithBooks(authorId).toDomain()
+    override suspend fun getAuthorWithBooks(authorId: String): AuthorWithBooks? {
+        val authorWithBooksDbo = bookAuthorLocalDataSource.getAuthorWithBooks(authorId)
+        return authorWithBooksDbo?.toDomain()
     }
 }

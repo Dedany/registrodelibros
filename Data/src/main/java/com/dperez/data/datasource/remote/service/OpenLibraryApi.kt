@@ -1,9 +1,13 @@
 package com.dperez.data.datasource.remote.service
 
 
+import com.dperez.data.datasource.remote.dto.author.AuthorDto
 import com.dperez.data.datasource.remote.dto.author.AuthorSearchResponseDto
+import com.dperez.data.datasource.remote.dto.book.BookDetailDto
+import com.dperez.data.datasource.remote.dto.book.BookDto
 import com.dperez.data.datasource.remote.dto.book.SearchResponseDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -33,4 +37,13 @@ interface OpenLibraryApi {
         @Query("q") query: String
     ): AuthorSearchResponseDto
 
+    @GET("authors/{authorId}.json")
+    suspend fun getAuthorById(
+        @retrofit2.http.Path("authorId") authorId: String
+    ): AuthorDto
+
+    @GET("works/{workId}.json")
+    suspend fun getBookById(
+        @Path("workId") bookId: String
+    ): BookDetailDto
 }

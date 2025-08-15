@@ -8,8 +8,8 @@ import com.dperez.data.datasource.local.dbo.BookWithAuthors as BookWithAuthorsDb
 
 fun AuthorWithBooksDbo.toDomain(): AuthorWithBooks {
     return AuthorWithBooks(
-        author = author.toDomain(),
-        books = books.map { it.toDomain() }
+        author = this.author.toDomain(),
+        books = this.books.map { bookDbo -> bookDbo.toDomain() }
     )
 }
 

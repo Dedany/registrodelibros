@@ -1,5 +1,7 @@
 package com.dedany.registrodelibros.di
 
+import com.dperez.data.datasource.remote.dto.author.BioField
+import com.dperez.data.datasource.remote.dto.author.BioFieldDeserializer
 import com.dperez.data.datasource.remote.service.OpenLibraryApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -20,7 +22,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGson(): Gson = GsonBuilder().create()
+    fun provideGson(): Gson = GsonBuilder()
+        .registerTypeAdapter(BioField::class.java, BioFieldDeserializer())
+        .create()
 
     @Provides
     @Singleton

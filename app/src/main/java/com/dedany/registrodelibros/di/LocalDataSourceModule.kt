@@ -18,8 +18,11 @@ object LocalDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideBookLocalDataSource(bookDao: BookDao): BookLocalDataSource {
-        return BookLocalDataSource(bookDao)
+    fun provideBookLocalDataSource(
+        bookDao: BookDao,
+        bookAuthorDao: BookAuthorDao
+    ): BookLocalDataSource {
+        return BookLocalDataSource(bookDao,bookAuthorDao)
     }
 
     @Provides

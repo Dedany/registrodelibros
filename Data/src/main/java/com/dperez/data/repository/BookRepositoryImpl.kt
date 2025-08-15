@@ -1,6 +1,7 @@
 package com.dperez.data.repository
 
 import android.util.Log
+import com.dedany.domain.entities.Author
 import com.dedany.domain.entities.Book
 import com.dedany.domain.repository.BookRepository
 import com.dperez.data.datasource.local.dao.BookDao
