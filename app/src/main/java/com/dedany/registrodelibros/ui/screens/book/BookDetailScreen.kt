@@ -1,5 +1,7 @@
 package com.dedany.registrodelibros.ui.screens.book
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -32,6 +34,7 @@ import coil.compose.AsyncImage
 import com.dedany.domain.entities.Author
 import com.dedany.domain.entities.Book
 import com.dedany.domain.entities.BookWithAuthors
+import kotlin.text.isNotBlank
 
 
 @Composable
@@ -75,15 +78,21 @@ fun BookDetailScreen(
 
             if (authorsList.isNotEmpty()) {
                 AuthorsClickableText(
-                    authors = authorsList.mapNotNull { it.name },
-                    onAuthorClick = { authorName ->
-                        navController.navigate("autores")
+                    authorsData = authorsList,
+                    onAuthorClick = { clickedAuthor ->
+                        val authorIdNavigate = clickedAuthor.id
+                        if (authorIdNavigate.isNotBlank()) {
+                            val encodedId = Uri.encode(authorIdNavigate)
+                            Log.d("BookDetailNav", "Navegando a authorDetail/$encodedId desde BookDetailScreen")
+                            navController.navigate("authorDetail/$encodedId") // <-- CORRECTO: Navegar a la pantalla de detalle del autor
+                        } else {
+                            Log.w("BookDetailNav", "Intento de navegar a autor con ID vacío: ${clickedAuthor.name}")
+                        }
                     }
                 )
-            }else {
+            } else {
                 BookDetailText(text = "Autor desconocido")
             }
-
             BookDetailText(text = "Publicado en: ${bookEntity.publishYear ?: "Desconocido"}")
 
             // Aquí añadimos la descripción
@@ -139,18 +148,18 @@ fun BookDetailText(
 }
 @Composable
 fun AuthorsClickableText(
-    authors: List<String>,
-    onAuthorClick: (String) -> Unit
+    authorsData: List<Author>,
+    onAuthorClick: (Author) -> Unit
 ) {
     val annotatedString = buildAnnotatedString {
-        authors.forEachIndexed { index, author ->
+        authorsData.forEachIndexed { index, author ->
             val tag = "author_$index"
-            pushStringAnnotation(tag = tag, annotation = author)
+            pushStringAnnotation(tag = tag, annotation = author.id)
             withStyle(style = SpanStyle(color = Color.Blue, fontWeight = FontWeight.Bold)) {
-                append(author)
+                append(author.name)
             }
             pop()
-            if (index != authors.lastIndex) append(", ")
+            if (index != authorsData.lastIndex) append(", ")
         }
     }
 
@@ -159,7 +168,9 @@ fun AuthorsClickableText(
         onClick = { offset ->
             annotatedString.getStringAnnotations(start = offset, end = offset)
                 .firstOrNull()?.let { annotation ->
-                    onAuthorClick(annotation.item)
+                    val clickedAuthor = authorsData.find { it.id == annotation.item }
+                    clickedAuthor?.let { onAuthorClick(it) }
+
                 }
         },
         modifier = Modifier
