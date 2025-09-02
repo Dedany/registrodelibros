@@ -11,4 +11,7 @@ private val bookAuthorDao: BookAuthorDao
     suspend fun insertCrossRefs(crossRefs: List<BookAuthorCrossRef>) = bookAuthorDao.insertCrossRefs(crossRefs)
     suspend fun getBookWithAuthors(bookId: String) = bookAuthorDao.getBookWithAuthors(bookId)
     suspend fun getAuthorWithBooks(authorId: String) = bookAuthorDao.getAuthorWithBooks(authorId)
+    suspend fun getCrossRefsByBookId(bookId: String): List<BookAuthorCrossRef> {
+        return bookAuthorDao.getCrossRefsForBook(bookId)
+    }
 }

@@ -20,6 +20,10 @@ class AuthorRepositoryImpl @Inject constructor(
 
     override suspend fun getAuthorById(id: String): Author? { // Author es tu entidad de dominio
         Log.i("dani", "la llamada es  ID: $id")
+
+        val cleanId = id.substringAfterLast('/')
+        Log.i("AuthorRepo", "ID limpio para operaciones: $cleanId")
+
         val localAuthorDbo: AuthorDbo? = authorLocalDataSource.getAuthorById(id)
         Log.d("AuthorRepo", "Local AuthorDbo for ID $id: $localAuthorDbo")
         Log.d("AuthorRepo", "Local AuthorDbo bio: ${localAuthorDbo?.bio}")
@@ -33,7 +37,7 @@ class AuthorRepositoryImpl @Inject constructor(
         Log.i("AuthorRepo", "ID $id: Author not in local cache OR bio is missing/empty. Fetching from remote.")
 
         // Asumo que tu 'id' de dominio ya es compatible con la API, si no, ajústalo.
-        val remoteAuthorDto: AuthorDto? = authorRemoteDataSource.getAuthorById(id)
+        val remoteAuthorDto: AuthorDto? = authorRemoteDataSource.getAuthorById(cleanId)
         Log.d("AuthorRepo", "ID $id: Remote AuthorDto from data source: $remoteAuthorDto")
 
         if (remoteAuthorDto == null) {

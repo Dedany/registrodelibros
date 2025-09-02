@@ -36,7 +36,8 @@ interface BookAuthorDao {
     WHERE a.name LIKE '%' || :authorName || '%'
     """
     )
-
-
     suspend fun getBooksByAuthorName(authorName: String): List<BookDbo>
+
+    @Query("SELECT * FROM bookauthorcrossref WHERE bookId = :bookId")
+    suspend fun getCrossRefsForBook(bookId: String): List<BookAuthorCrossRef>
 }

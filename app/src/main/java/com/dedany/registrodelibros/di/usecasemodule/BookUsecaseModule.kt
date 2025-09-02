@@ -1,6 +1,7 @@
 package com.dedany.registrodelibros.di.usecasemodule
 
 import com.dedany.domain.repository.BookRepository
+import com.dedany.usecase.author.CoordinatorUseCase
 import com.dedany.usecase.book.DeleteBookUseCase
 import com.dedany.usecase.book.GetAllBooksUseCase
 import com.dedany.usecase.book.GetBookByIdUseCase
@@ -9,6 +10,7 @@ import com.dedany.usecase.book.GetBooksByTitleUseCase
 import com.dedany.usecase.book.GetFavoriteBooksUseCase
 import com.dedany.usecase.book.SaveBookUseCase
 import com.dedany.usecase.book.SetBookFavoriteUseCase
+import com.dedany.usecase.bookAuthor.GetBookWithAuthorsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +25,22 @@ object BookUseCaseModule {
     @Singleton
     fun provideGetAllBooksUseCase(repository: BookRepository): GetAllBooksUseCase {
         return GetAllBooksUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetBookByIdUseCase(repository: BookRepository): GetBookByIdUseCase {
+        return GetBookByIdUseCase(repository) // Asumiendo que aún lo necesitas en algún otro lugar
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideCoordinatorUseCase(
+        bookRepository: BookRepository,
+        getBookWithAuthorsUseCase: GetBookWithAuthorsUseCase // Hilt proveerá este
+    ): CoordinatorUseCase {
+        return CoordinatorUseCase(bookRepository, getBookWithAuthorsUseCase)
     }
 
     @Provides
@@ -51,12 +69,6 @@ object BookUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGetBookByIdUseCase(repository: BookRepository): GetBookByIdUseCase {
-        return GetBookByIdUseCase(repository)
-    }
-
-    @Provides
-    @Singleton
     fun provideGetBooksByAuthorUseCase(repository: BookRepository): GetBooksByAuthorUseCase {
         return GetBooksByAuthorUseCase(repository)
     }
@@ -67,3 +79,4 @@ object BookUseCaseModule {
         return GetBooksByTitleUseCase(repository)
     }
 }
+

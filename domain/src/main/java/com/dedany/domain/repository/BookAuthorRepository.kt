@@ -10,5 +10,6 @@ interface BookAuthorRepository {
 
     suspend fun getBookWithAuthors(bookId: String): BookWithAuthors?
     suspend fun getAuthorWithBooks(authorId: String): AuthorWithBooks?
+    suspend fun getCrossRefsForBook(bookId: String): List<Pair<String, String>>
 
 }
