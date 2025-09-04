@@ -5,6 +5,7 @@ import com.dedany.domain.repository.BookAuthorRepository
 import com.dedany.domain.repository.BookRepository
 import com.dperez.data.repository.BookRepositoryImpl
 import com.dperez.data.datasource.local.localdatasource.BookLocalDataSource
+import com.dperez.data.datasource.remote.remotedatasource.AuthorRemoteDataSource
 import com.dperez.data.datasource.remote.remotedatasource.BookRemoteDataSource
 import dagger.Module
 import dagger.Provides
@@ -22,8 +23,9 @@ object BookRepositoryModule {
         localDataSource: BookLocalDataSource,
         remoteDataSource: BookRemoteDataSource,
         authorRepository: AuthorRepository,
+        authorRemoteDataSource: AuthorRemoteDataSource,
         bookAuthorRepository: BookAuthorRepository
     ): BookRepository {
-        return BookRepositoryImpl(localDataSource, remoteDataSource, authorRepository, bookAuthorRepository)
+        return BookRepositoryImpl(localDataSource, remoteDataSource, authorRepository,authorRemoteDataSource,bookAuthorRepository)
     }
 }

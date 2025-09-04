@@ -4,7 +4,7 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.dperez.data.datasource.remote.dto.author.AuthorDto
 import com.dperez.data.datasource.remote.dto.author.AuthorSearchResponseDto
-import com.dperez.data.datasource.remote.dto.book.BookDetailDto
+import com.dperez.data.datasource.remote.dto.author.WorksByAuthorDto
 import com.dperez.data.datasource.remote.service.OpenLibraryApi
 import javax.inject.Inject
 
@@ -32,6 +32,16 @@ class AuthorRemoteDataSource @Inject constructor(
             author
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching author by ID: $authorId. Exception: ${e.message}", e)
+            null
+        }
+    }
+
+    suspend fun getWorksByAuthorId(authorId: String): WorksByAuthorDto? {
+        return try {
+
+            api.getWorksByAuthor(authorId)
+        } catch (e: Exception) {
+            Log.e("AuthorRemoteDS", "Error fetching works for author $authorId", e)
             null
         }
     }
