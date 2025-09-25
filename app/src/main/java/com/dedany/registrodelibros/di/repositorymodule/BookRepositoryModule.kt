@@ -3,6 +3,7 @@ package com.dedany.registrodelibros.di.repositorymodule
 import com.dedany.domain.repository.AuthorRepository
 import com.dedany.domain.repository.BookAuthorRepository
 import com.dedany.domain.repository.BookRepository
+import com.dperez.data.datasource.local.localdatasource.BookAuthorLocalDataSource
 import com.dperez.data.repository.BookRepositoryImpl
 import com.dperez.data.datasource.local.localdatasource.BookLocalDataSource
 import com.dperez.data.datasource.remote.remotedatasource.AuthorRemoteDataSource
@@ -21,11 +22,12 @@ object BookRepositoryModule {
     @Singleton
     fun provideBookRepository(
         localDataSource: BookLocalDataSource,
+        bookAuthorLocalDataSource: BookAuthorLocalDataSource,
         remoteDataSource: BookRemoteDataSource,
         authorRepository: AuthorRepository,
         authorRemoteDataSource: AuthorRemoteDataSource,
         bookAuthorRepository: BookAuthorRepository
     ): BookRepository {
-        return BookRepositoryImpl(localDataSource, remoteDataSource, authorRepository,authorRemoteDataSource,bookAuthorRepository)
+        return BookRepositoryImpl(localDataSource, bookAuthorLocalDataSource,remoteDataSource, authorRepository,authorRemoteDataSource,bookAuthorRepository)
     }
 }
