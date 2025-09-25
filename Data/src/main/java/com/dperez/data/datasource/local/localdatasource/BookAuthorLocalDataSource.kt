@@ -2,6 +2,7 @@ package com.dperez.data.datasource.local.localdatasource
 
 import com.dperez.data.datasource.local.dao.BookAuthorDao
 import com.dperez.data.datasource.local.dbo.BookAuthorCrossRef
+import com.dperez.data.datasource.local.dbo.BookDbo
 import javax.inject.Inject
 
 class BookAuthorLocalDataSource @Inject constructor(
@@ -14,4 +15,6 @@ private val bookAuthorDao: BookAuthorDao
     suspend fun getCrossRefsByBookId(bookId: String): List<BookAuthorCrossRef> {
         return bookAuthorDao.getCrossRefsForBook(bookId)
     }
+    suspend fun getBooksByAuthorId(authorId: String): List<BookDbo> =
+        bookAuthorDao.getBooksByAuthorId(authorId)
 }

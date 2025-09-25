@@ -6,6 +6,7 @@ import com.dedany.domain.entities.Book
 import com.dedany.domain.repository.AuthorRepository
 import com.dedany.domain.repository.BookAuthorRepository
 import com.dedany.domain.repository.BookRepository
+import com.dperez.data.datasource.local.localdatasource.BookAuthorLocalDataSource
 import com.dperez.data.datasource.local.localdatasource.BookLocalDataSource
 import com.dperez.data.datasource.remote.dto.book.BookDetailDto
 import com.dperez.data.datasource.remote.remotedatasource.AuthorRemoteDataSource
@@ -21,6 +22,7 @@ import kotlin.text.substringAfterLast
 
 class BookRepositoryImpl @Inject constructor(
     private val bookLocalDataSource: BookLocalDataSource,
+    private val bookAuthorLocalDataSource: BookAuthorLocalDataSource,
     private val bookRemoteDataSource: BookRemoteDataSource,
     private val authorRepository: AuthorRepository,
     private val authorRemoteDataSource: AuthorRemoteDataSource,
@@ -182,81 +184,54 @@ class BookRepositoryImpl @Inject constructor(
         return bookLocalDataSource.getBooksByTitle(trimmedTitle).map { it.toDomain() }
     }
 
+    //llamar a Local por idAuthor si es nula o vacio llamar a remote y si no llamo a local
     override suspend fun getBooksByAuthorId(authorId: String): List<Book> {
         Log.d("BookRepo", "getBooksByAuthorId - Solicitando libros para autor ID: $authorId")
-        // El authorId que llega aquí ya debe estar limpio (ej: OLXXXXA)
-        val worksResponseDto = authorRemoteDataSource.getWorksByAuthorId(authorId)
 
-        if (worksResponseDto?.entries == null || worksResponseDto.entries.isEmpty()) {
+        // 1. Consultar en local mediante crossRef
+        val localBooks = bookAuthorLocalDataSource.getBooksByAuthorId(authorId)
+        if (localBooks.isNotEmpty()) {
+            Log.d("BookRepo", "getBooksByAuthorId - Encontrados ${localBooks.size} libros en local")
+            return localBooks.map { it.toDomain() }
+        }else {
+            Log.d("BookRepo", "getBooksByAuthorId - No hay libros en local, consultando remoto...")
+            val worksResponseDto = authorRemoteDataSource.getWorksByAuthorId(authorId)
+            if (worksResponseDto?.entries.isNullOrEmpty()) {
+                Log.d(
+                    "BookRepo",
+                    "getBooksByAuthorId - No se encontraron obras remotas para autor $authorId"
+                )
+                return emptyList()
+            }
+
+            val books = mutableListOf<Book>()
+
+            for (workEntryDto in worksResponseDto.entries.orEmpty()) {
+                val cleanWorkId = workEntryDto.key?.substringAfterLast('/') ?: continue
+
+                // Si existía en local (favoritos, leídos, rating)
+                val existingLocalBookDbo = bookLocalDataSource.getBookById(cleanWorkId)
+
+                // Mapear y guardar
+                val bookDboToSave = workEntryDto.toDbo(
+                    isFavoriteOverride = existingLocalBookDbo?.isFavorite,
+                    isReadOverride = existingLocalBookDbo?.isRead,
+                    ratingOverride = existingLocalBookDbo?.rating
+                )
+                bookLocalDataSource.saveBook(bookDboToSave)
+
+                // Guardar relación autor–libro
+                bookAuthorRepository.insertCrossRefs(listOf(cleanWorkId to authorId))
+
+                books.add(bookDboToSave.toDomain())
+            }
+
             Log.d(
                 "BookRepo",
-                "getBooksByAuthorId - No se encontraron obras remotas para autor $authorId"
+                "getBooksByAuthorId - Guardados ${books.size} libros en local desde remoto"
             )
-            return emptyList() // No hay obras o error
+            return books
         }
 
-        val books = worksResponseDto.entries.mapNotNull { workEntryDto ->
-            // Opción 1: Mapear directamente a Book de dominio (información limitada)
-            // workEntryDto.toDomain()
-
-            // Opción 2: Procesar cada libro para guardarlo y obtener más detalles (más costoso pero más completo)
-            // Esto es similar a lo que hace getBookById, pero para una lista.
-            // Necesitamos el ID limpio de la obra.
-            val cleanWorkId = workEntryDto.key?.substringAfterLast('/')
-            if (cleanWorkId.isNullOrBlank()) {
-                return@mapNotNull null // No se puede procesar sin ID
-            }
-
-            // Intentar obtener el estado local del libro (favorito, leído)
-            val existingLocalBookDbo = bookLocalDataSource.getBookById(cleanWorkId)
-
-            // Mapear el WorkEntryDto a un BookDbo, preservando el estado local si existe
-            val bookDboToSave = workEntryDto.toDbo(
-                isFavoriteOverride = existingLocalBookDbo?.isFavorite,
-                isReadOverride = existingLocalBookDbo?.isRead,
-                ratingOverride = existingLocalBookDbo?.rating
-            )
-            // Guardar el libro (o actualizarlo si ya existe) en la base de datos local
-            bookLocalDataSource.saveBook(bookDboToSave)
-            Log.i(
-                "BookRepo",
-                "Libro guardado/actualizado desde obras del autor: ${bookDboToSave.id} - ${bookDboToSave.title}"
-            )
-
-            // Procesar los autores de esta obra (WorkEntryDto) y crear las relaciones
-            workEntryDto.authors?.forEach { workAuthorStub ->
-                workAuthorStub.author?.key?.substringAfterLast('/')?.let { authorKeyFromWork ->
-                    if (authorKeyFromWork.isNotBlank()) {
-                        // Intentar obtener/crear el autor en nuestra BD
-                        // authorRepository.getAuthorById ya debería manejar la obtención/guardado del autor
-                        val authorDomain = authorRepository.getAuthorById(authorKeyFromWork)
-                        if (authorDomain != null) {
-                            // Crear la relación BookAuthorCrossRef
-                            // Suponiendo que bookAuthorRepository.insertCrossRefs espera List<Pair<String,String>>
-                            // o tienes un insertCrossRef singular.
-                            bookAuthorRepository.insertCrossRefs(listOf(cleanWorkId to authorDomain.id))
-                            Log.d(
-                                "BookRepo",
-                                "CrossRef creada/asegurada para obra ${cleanWorkId} y autor ${authorDomain.id} (${authorDomain.name})"
-                            )
-                        } else {
-                            Log.w(
-                                "BookRepo",
-                                "No se pudo obtener/crear autor ${authorKeyFromWork} para la obra ${cleanWorkId}"
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Convertir el BookDbo (que ahora está guardado y potencialmente actualizado) a la entidad de dominio Book
-            // para incluirlo en la lista de retorno de esta función.
-            bookDboToSave.toDomain()
-        }
-        Log.i(
-            "BookRepo",
-            "getBooksByAuthorId - Total de ${books.size} libros procesados y mapeados para autor $authorId"
-        )
-        return books
     }
 }

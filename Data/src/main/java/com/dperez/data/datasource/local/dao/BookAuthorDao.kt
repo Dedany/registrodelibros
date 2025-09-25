@@ -38,6 +38,14 @@ interface BookAuthorDao {
     )
     suspend fun getBooksByAuthorName(authorName: String): List<BookDbo>
 
+    @Query(
+        """ SELECT DISTINCT b.* 
+    FROM books b 
+    INNER JOIN bookauthorcrossref bac ON b.id = bac.bookId 
+    WHERE bac.authorId = :authorId """
+    )
+    suspend fun getBooksByAuthorId(authorId: String): List<BookDbo>
+
     @Query("SELECT * FROM bookauthorcrossref WHERE bookId = :bookId")
     suspend fun getCrossRefsForBook(bookId: String): List<BookAuthorCrossRef>
 }
