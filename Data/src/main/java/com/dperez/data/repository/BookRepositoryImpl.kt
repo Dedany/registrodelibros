@@ -191,6 +191,7 @@ class BookRepositoryImpl @Inject constructor(
         // 1. Consultar en local mediante crossRef
         val localBooks = bookAuthorLocalDataSource.getBooksByAuthorId(authorId)
         if (localBooks.isNotEmpty()) {
+            //POLÍTICA DE CACHÉ 10 días
             Log.d("BookRepo", "getBooksByAuthorId - Encontrados ${localBooks.size} libros en local")
             return localBooks.map { it.toDomain() }
         }else {
