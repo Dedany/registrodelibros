@@ -14,4 +14,8 @@ kotlin {
 dependencies {
     implementation(project(":domain"))
     implementation(libs.javax.inject)
+
+    //test
+    testImplementation("io.mockk:mockk:1.14.5")
+    testImplementation(libs.junit.junit)
 }

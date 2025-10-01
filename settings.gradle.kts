@@ -22,6 +22,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "registrodelibros"
 include(":app")
-include(":Data")
+include(":data")
 include(":domain")
 include(":usecase")

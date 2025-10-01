@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.testImplementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -48,7 +50,7 @@ android {
 
 dependencies {
 
-    implementation(project(":Data"))
+    implementation(project(":data"))
     implementation(project(":usecase"))
     implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
@@ -61,7 +63,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.ads.mobile.sdk)
     implementation(libs.androidx.room.runtime.android)
+
+    //test
     testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.14.5")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
