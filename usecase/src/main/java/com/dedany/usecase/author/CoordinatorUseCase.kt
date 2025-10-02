@@ -19,7 +19,7 @@ class CoordinatorUseCase  @Inject constructor(
         // El 'bookIdFromViewModel' es el ID que viene de la UI/ViewModel.
         // bookRepository.getBookById() internamente manejará la limpieza de este ID si es necesario para la API.
 
-        val preliminaryBook: Book? = bookRepository.getBookById(bookIdFromViewModel)
+        val preliminaryBook : Book? = bookRepository.getBookById(bookIdFromViewModel)
 
         if (preliminaryBook == null) {
 

@@ -18,4 +18,5 @@ dependencies {
     //test
     testImplementation("io.mockk:mockk:1.14.5")
     testImplementation(libs.junit.junit)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
 }
