@@ -17,7 +17,7 @@
 - ⚡ **Arquitectura limpia**: módulos separados (`app`, `domain`, `data`)  
 - 🛠️ **Inyección de dependencias** con Hilt  
 - 📱 **UI moderna** con Jetpack Compose  
-- 🧪 **Tests unitarios e integración** usando Turbine y Mockito  
+- 🧪 **Tests unitarios e integración** usando Turbine y MockK 
 
 ---
 
@@ -30,7 +30,7 @@
 - **Inyección de dependencias:** Hilt  
 - **Asincronía:** Coroutines + Flow  
 - **Networking:** (opcional, si usas alguna API de libros)  
-- **Testing:** Turbine, Mockito  
+- **Testing:** Turbine, MockK 
 
 ---
 
