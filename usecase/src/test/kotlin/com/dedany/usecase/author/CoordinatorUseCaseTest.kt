@@ -49,10 +49,10 @@ class CoordinatorUseCaseTest {
     }
 
 
-    @RelaxedMockK
+    @MockK
     private lateinit var bookRepository: BookRepository
 
-    @RelaxedMockK
+    @MockK
     private lateinit var getBookWithAuthorsUseCase: GetBookWithAuthorsUseCase
 
     lateinit var coordinatorUseCase: CoordinatorUseCase
