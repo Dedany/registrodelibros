@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +38,23 @@ import com.dedany.domain.entities.BookWithAuthors
 import kotlin.text.isNotBlank
 
 
+fun cleanReferences(text: String): String {
+    // Elimina patrones tipo [1], [2], etc.
+    return text.replace(Regex("""\[\d+\]"""), "")
+}
+
+fun extractMainDescription(text: String): String {
+    // Corta justo antes de "See also", enlaces largos o cualquier sección no descriptiva
+    val keywords = listOf("See also", "Fuente:", "https://", "http://")
+    var idx = -1
+    for (kw in keywords) {
+        val found = text.indexOf(kw)
+        if (found > 0 && (idx == -1 || found < idx)) idx = found
+    }
+    val cleanText = if (idx > 0) text.substring(0, idx) else text
+    return cleanText.trim()
+}
+
 @Composable
 fun BookDetailScreen(
     bookId: String,
@@ -54,7 +72,8 @@ fun BookDetailScreen(
 
     if (currentBookDetails != null) {
         val bookEntity: Book = currentBookDetails.book // Accede a la entidad Book interna
-        val authorsList: List<Author> = currentBookDetails.authors // Accede a la lista de Author interna
+        val authorsList: List<Author> =
+            currentBookDetails.authors // Accede a la lista de Author interna
 
 
         Column(
@@ -63,6 +82,8 @@ fun BookDetailScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            //Portada
             AsyncImage(
                 model = bookEntity.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
                 contentDescription = "Portada de ${bookEntity.title ?: "Libro"}",
@@ -73,9 +94,10 @@ fun BookDetailScreen(
                     .padding(top = 32.dp),
                 contentScale = ContentScale.Crop
             )
-
+            //Titulo
             BookDetailText(text = bookEntity.title ?: "Sin título")
 
+            //Author, clickable
             if (authorsList.isNotEmpty()) {
                 AuthorsClickableText(
                     authorsData = authorsList,
@@ -83,30 +105,41 @@ fun BookDetailScreen(
                         val authorIdNavigate = clickedAuthor.id
                         if (authorIdNavigate.isNotBlank()) {
                             val encodedId = Uri.encode(authorIdNavigate)
-                            Log.d("BookDetailNav", "Navegando a authorDetail/$encodedId desde BookDetailScreen")
-                            navController.navigate("authorDetail/$encodedId") // <-- CORRECTO: Navegar a la pantalla de detalle del autor
+                            Log.d(
+                                "BookDetailNav",
+                                "Navegando a authorDetail/$encodedId desde BookDetailScreen"
+                            )
+                            navController.navigate("authorDetail/$encodedId")
                         } else {
-                            Log.w("BookDetailNav", "Intento de navegar a autor con ID vacío: ${clickedAuthor.name}")
+                            Log.w(
+                                "BookDetailNav",
+                                "Intento de navegar a autor con ID vacío: ${clickedAuthor.name}"
+                            )
                         }
                     }
                 )
             } else {
                 BookDetailText(text = "Autor desconocido")
             }
+
+            //Año
             BookDetailText(text = "Publicado en: ${bookEntity.publishYear ?: "Desconocido"}")
 
-            // Aquí añadimos la descripción
+            // Descripcion principal
             BookDetailText(
-                text = bookEntity.description ?: "Sin descripción",
+                text = cleanReferences(bookEntity.description ?: "Sin descripción"),
                 modifier = Modifier.padding(top = 16.dp),
                 color = androidx.compose.ui.graphics.Color.DarkGray
             )
 
+
+            //temas visuales
             val subjects = bookEntity.subjects
             if (!subjects.isNullOrEmpty()) {
                 val displaySubjects = subjects.take(5).joinToString(", ")
                 val moreCount = subjects.size - 5
-                val text = if (moreCount > 0) "$displaySubjects, +$moreCount more" else displaySubjects
+                val text =
+                    if (moreCount > 0) "$displaySubjects, +$moreCount more" else displaySubjects
 
                 BookDetailText(
                     text = "Temas: $text",
@@ -135,11 +168,8 @@ fun BookDetailScreen(
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
-    } else {
-        Text("Cargando...")
     }
 }
-
 
 
 @Composable
@@ -165,6 +195,7 @@ fun BookDetailText(
         color = color
     )
 }
+
 @Composable
 fun AuthorsClickableText(
     authorsData: List<Author>,
