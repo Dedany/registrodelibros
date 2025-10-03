@@ -10,6 +10,7 @@ data class BookDbo(
     val coverId: Int?,
     val publishYear: Int?,
     val description: String?,
+    val subjects: List<String>?,
     val rating: Int = 0,
     val isRead: Boolean = false,
     val isFavorite: Boolean = false,

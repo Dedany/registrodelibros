@@ -12,7 +12,7 @@ fun BookDbo.toDomain(): Book {
         coverId = this.coverId,
         publishYear = this.publishYear,
         description = this.description,
-        subjects = null,
+        subjects = this.subjects,
         rating = this.rating,
         isRead = this.isRead,
         isFavorite = this.isFavorite,
@@ -25,6 +25,7 @@ fun Book.toDbo(): BookDbo {
         title = this.title,
         coverId = this.coverId,
         publishYear = this.publishYear,
+        subjects = this.subjects,
         description = this.description,
         rating = this.rating,
         isRead = this.isRead,
@@ -41,9 +42,10 @@ fun BookDto.toDbo(): BookDbo {
         coverId = this.coverId,
         publishYear = this.publishYear,
         description = null,
+        subjects = null,
         rating = 0,
         isRead = false,
-        isFavorite = false
+        isFavorite = false,
     )
 }
 
@@ -59,6 +61,7 @@ fun BookDetailDto.toDboMerging(existingDbo: BookDbo?): BookDbo {
         coverId = this.covers?.firstOrNull() ?: existingDbo?.coverId,
         publishYear = existingDbo?.publishYear,
         description = this.description?.value ?: existingDbo?.description,
+        subjects = this.subjects ?: existingDbo?.subjects,
         rating = existingDbo?.rating ?: 0,
         isRead = existingDbo?.isRead ?: false,
         isFavorite = existingDbo?.isFavorite ?: false

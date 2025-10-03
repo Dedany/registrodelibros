@@ -102,6 +102,21 @@ fun BookDetailScreen(
                 color = androidx.compose.ui.graphics.Color.DarkGray
             )
 
+            val subjects = bookEntity.subjects
+            if (!subjects.isNullOrEmpty()) {
+                BookDetailText(
+                    text = "Temas: ${subjects.joinToString(", ")}",
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = Color.DarkGray
+                )
+            } else {
+                BookDetailText(
+                    text = "Temas desconocidos",
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = Color.DarkGray
+                )
+            }
+
             // Mostrar estado favorito, leído y rating
             BookDetailText(
                 text = if (bookEntity.isFavorite) "❤️ Favorito" else "🤍 No es favorito",

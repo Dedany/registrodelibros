@@ -98,6 +98,7 @@ fun WorkEntryDto.toDbo(isFavoriteOverride: Boolean? = null, isReadOverride: Bool
         coverId = coverId,
         publishYear = this.firstPublishDate?.toIntOrNull(),
         description = descriptionText,
+        subjects = null,
         rating = ratingOverride ?: 0,
         isRead = isReadOverride ?: false,
         isFavorite = isFavoriteOverride ?: false
