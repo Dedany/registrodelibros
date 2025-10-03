@@ -104,8 +104,12 @@ fun BookDetailScreen(
 
             val subjects = bookEntity.subjects
             if (!subjects.isNullOrEmpty()) {
+                val displaySubjects = subjects.take(5).joinToString(", ")
+                val moreCount = subjects.size - 5
+                val text = if (moreCount > 0) "$displaySubjects, +$moreCount more" else displaySubjects
+
                 BookDetailText(
-                    text = "Temas: ${subjects.joinToString(", ")}",
+                    text = "Temas: $text",
                     modifier = Modifier.padding(top = 8.dp),
                     color = Color.DarkGray
                 )

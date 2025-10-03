@@ -18,7 +18,7 @@ import com.dperez.data.datasource.local.dbo.BookDetailDbo
         AuthorDbo::class,
         BookAuthorCrossRef::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
