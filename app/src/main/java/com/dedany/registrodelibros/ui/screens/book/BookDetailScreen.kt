@@ -83,6 +83,8 @@ fun BookDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+
+
             //Portada
             AsyncImage(
                 model = bookEntity.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },

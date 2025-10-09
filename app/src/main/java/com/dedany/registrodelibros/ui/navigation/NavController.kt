@@ -1,6 +1,8 @@
 package com.dedany.registrodelibros.ui.navigation
 
 import BoxWithColumnClickableBoxes
+import GenreScreen
+import GenresListScreen
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,6 +17,7 @@ import com.dedany.registrodelibros.ui.screens.author.AuthorsViewModel
 import com.dedany.registrodelibros.ui.screens.book.BooksViewModel
 import com.dedany.registrodelibros.ui.screens.author.AuthorsScreen
 import com.dedany.registrodelibros.ui.screens.author.AuthorDetailScreen
+
 
 
 @Composable
@@ -63,6 +66,18 @@ fun AppNavigation() {
                 authorId = decodedId,
                 navController = navController
             )
+        }
+        composable("generos"){
+            GenresListScreen(navController = navController)
+        }
+        composable(
+            route = "generos/{genre}",
+            arguments = listOf(navArgument("genre") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val genre = backStackEntry.arguments?.getString("genre") ?: ""
+            GenreScreen(
+                genre = genre,
+                navController = navController)
         }
     }
 }

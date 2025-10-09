@@ -13,13 +13,9 @@ class CoordinatorUseCase  @Inject constructor(
 ) {
     suspend operator fun invoke(bookIdFromViewModel: String): BookWithAuthors? {
 
-
-        // PASO 1: Llamar a bookRepository.getBookById() para asegurar que los datos base,
-        // los autores y las CrossRef se procesen y guarden en la BD.
-        // El 'bookIdFromViewModel' es el ID que viene de la UI/ViewModel.
-        // bookRepository.getBookById() internamente manejará la limpieza de este ID si es necesario para la API.
-
         val preliminaryBook : Book? = bookRepository.getBookById(bookIdFromViewModel)
+
+
 
         if (preliminaryBook == null) {
 

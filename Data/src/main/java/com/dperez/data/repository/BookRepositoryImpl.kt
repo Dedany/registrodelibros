@@ -59,6 +59,13 @@ class BookRepositoryImpl @Inject constructor(
     override suspend fun getFavoriteBooks(): List<Book> {
         return bookLocalDataSource.getFavoriteBooks().map { it.toDomain() }
     }
+    override suspend fun getBooksByGenre(genre: String): List<Book> {
+        val allBooks = getAllBooks() // o tu flujo de Room/API
+        return allBooks.filter { book ->
+            book.subjects?.any { it.equals(genre, ignoreCase = true) } == true
+        }
+    }
+
 
     override suspend fun getBookById(id: String): Book? {
         Log.d("BookRepoFlow", "[${Thread.currentThread().name}] getBookById - INICIO para ID: $id")
@@ -183,6 +190,25 @@ class BookRepositoryImpl @Inject constructor(
         bookLocalDataSource.saveBooks(remoteBooksDbo)
         return bookLocalDataSource.getBooksByTitle(trimmedTitle).map { it.toDomain() }
     }
+    private fun filterAndCleanBooks(books: List<Book>): List<Book> {
+        return books
+            .map { book ->
+                // Normaliza título a string no-null y trim
+                val cleanTitle = book.title?.trim().orEmpty()
+                book.copy(title = cleanTitle)
+            }
+            .distinctBy { it.title?.lowercase() }
+            .filter { book ->
+                // Aquí title ya es no-null
+                val title = book.title.orEmpty().lowercase()
+                // Filtra fuera ediciones limitadas o boxed set
+                !title.contains("limited edition") &&
+                        !title.contains("boxed set")
+            }
+            // Ajusta o quita el límite según prefieras
+            .take(50)
+    }
+
 
     //llamar a Local por idAuthor si es nula o vacio llamar a remote y si no llamo a local
     override suspend fun getBooksByAuthorId(authorId: String): List<Book> {
@@ -193,7 +219,8 @@ class BookRepositoryImpl @Inject constructor(
         if (localBooks.isNotEmpty()) {
             //POLÍTICA DE CACHÉ 10 días
             Log.d("BookRepo", "getBooksByAuthorId - Encontrados ${localBooks.size} libros en local")
-            return localBooks.map { it.toDomain() }
+            val domainLocal = localBooks.map { it.toDomain() }
+            return filterAndCleanBooks(domainLocal)
         }else {
             Log.d("BookRepo", "getBooksByAuthorId - No hay libros en local, consultando remoto...")
             val worksResponseDto = authorRemoteDataSource.getWorksByAuthorId(authorId)
@@ -231,8 +258,9 @@ class BookRepositoryImpl @Inject constructor(
                 "BookRepo",
                 "getBooksByAuthorId - Guardados ${books.size} libros en local desde remoto"
             )
-            return books
+            return filterAndCleanBooks(books)
         }
 
     }
+
 }
