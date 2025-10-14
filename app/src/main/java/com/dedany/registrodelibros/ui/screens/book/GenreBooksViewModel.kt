@@ -14,18 +14,18 @@ import javax.inject.Inject
 class GenreBooksViewModel @Inject constructor(
     private val getBooksByGenreUseCase: GetBooksByGenreUseCase
 ) : ViewModel() {
+        private val _books = MutableStateFlow<List<Book>>(emptyList())
+        val books: StateFlow<List<Book>> = _books
 
-    private val _books = MutableStateFlow<List<Book>>(emptyList())
-    val books: StateFlow<List<Book>> = _books
+        private val _isLoading = MutableStateFlow(false)
+        val isLoading: StateFlow<Boolean> = _isLoading
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    fun loadBooksByGenre(genre: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _books.value = getBooksByGenreUseCase(genre)
-            _isLoading.value = false
+        fun loadBooksByGenre(genre: String) {
+            viewModelScope.launch {
+                _isLoading.value = true
+                val result = getBooksByGenreUseCase(genre)
+                _books.value = result
+                _isLoading.value = false
+            }
         }
     }
-}

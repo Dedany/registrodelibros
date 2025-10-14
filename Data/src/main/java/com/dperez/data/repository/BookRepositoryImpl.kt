@@ -59,12 +59,23 @@ class BookRepositoryImpl @Inject constructor(
     override suspend fun getFavoriteBooks(): List<Book> {
         return bookLocalDataSource.getFavoriteBooks().map { it.toDomain() }
     }
-    override suspend fun getBooksByGenre(genre: String): List<Book> {
+
+    /*override suspend fun getBooksByGenre(genre: String): List<Book> {
         val allBooks = getAllBooks() // o tu flujo de Room/API
         return allBooks.filter { book ->
             book.subjects?.any { it.equals(genre, ignoreCase = true) } == true
         }
+*/
+    override suspend fun getBookDetail(id: String): Book {
+        val localBook = bookLocalDataSource.getBookById(id)
+        val remoteDetail = bookRemoteDataSource.getBookById(id)
+
+        val mergedDbo = remoteDetail.toDboMerging(localBook)
+        bookLocalDataSource.saveBook(mergedDbo)
+
+        return mergedDbo.toDomain()
     }
+
 
 
     override suspend fun getBookById(id: String): Book? {

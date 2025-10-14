@@ -1,8 +1,6 @@
 package com.dedany.registrodelibros.ui.navigation
 
 import BoxWithColumnClickableBoxes
-import GenreScreen
-import GenresListScreen
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,7 +15,8 @@ import com.dedany.registrodelibros.ui.screens.author.AuthorsViewModel
 import com.dedany.registrodelibros.ui.screens.book.BooksViewModel
 import com.dedany.registrodelibros.ui.screens.author.AuthorsScreen
 import com.dedany.registrodelibros.ui.screens.author.AuthorDetailScreen
-
+import com.dedany.registrodelibros.ui.screens.book.GenreScreen
+import com.dedany.registrodelibros.ui.screens.book.GenresListScreen
 
 
 @Composable

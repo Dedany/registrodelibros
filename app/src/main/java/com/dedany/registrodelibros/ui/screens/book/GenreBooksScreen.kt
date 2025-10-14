@@ -1,3 +1,5 @@
+package com.dedany.registrodelibros.ui.screens.book
+
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

@@ -1,3 +1,6 @@
+package com.dedany.registrodelibros.ui.screens.book
+
+
 import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -16,6 +19,8 @@ import androidx.navigation.NavController
 @Composable
 fun GenresListScreen(navController: NavController) {
     val generos = listOf(
+        "Magic",
+        "Adventure",
         "Fantasy",
         "Science Fiction",
         "Romance",
