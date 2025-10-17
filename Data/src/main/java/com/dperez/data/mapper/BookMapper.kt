@@ -4,6 +4,7 @@ import com.dedany.domain.entities.Book
 import com.dperez.data.datasource.local.dbo.BookDbo
 import com.dperez.data.datasource.remote.dto.book.BookDetailDto
 import com.dperez.data.datasource.remote.dto.book.BookDto
+import com.dperez.data.datasource.remote.dto.book.SubjectDto
 
 fun BookDbo.toDomain(): Book {
     return Book(
@@ -17,6 +18,22 @@ fun BookDbo.toDomain(): Book {
         isRead = this.isRead,
         isFavorite = this.isFavorite,
     )
+}
+fun SubjectDto.toDomain(genreSlug: String): List<Book> {
+    return works.mapNotNull { work ->
+        val id = work.key?.substringAfterLast('/') ?: return@mapNotNull null
+        Book(
+            id = id,
+            title = work.title ?: "Sin título",
+            coverId = work.coverId,
+            publishYear = work.firstPublishYear,
+            description = null,
+            subjects = listOf(genreSlug),
+            rating = 0,
+            isRead = false,
+            isFavorite = false
+        )
+    }
 }
 
 fun Book.toDbo(): BookDbo {

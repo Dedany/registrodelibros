@@ -3,7 +3,9 @@ package com.dperez.data.datasource.remote.remotedatasource
 import com.dperez.data.datasource.remote.dto.book.BookDetailDto
 import com.dperez.data.datasource.remote.dto.book.BookDto
 import com.dperez.data.datasource.remote.dto.book.SearchResponseDto
+import com.dperez.data.datasource.remote.dto.book.SubjectDto
 import com.dperez.data.datasource.remote.service.OpenLibraryApi
+import retrofit2.Response
 import javax.inject.Inject
 
 class BookRemoteDataSource @Inject constructor(
@@ -26,6 +28,13 @@ class BookRemoteDataSource @Inject constructor(
     }
     suspend fun getBookById(bookId: String): BookDetailDto {
         return api.getBookById(bookId)
+    }
+    suspend fun searchBooksBySubject(
+        subject: String,
+        limit: Int = 50,
+        offset: Int = 0
+    ): Response<SubjectDto> {
+        return api.searchBooksBySubject(subject, limit, offset)
     }
 
 }

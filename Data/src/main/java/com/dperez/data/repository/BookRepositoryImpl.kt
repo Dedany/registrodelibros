@@ -9,6 +9,7 @@ import com.dedany.domain.repository.BookRepository
 import com.dperez.data.datasource.local.localdatasource.BookAuthorLocalDataSource
 import com.dperez.data.datasource.local.localdatasource.BookLocalDataSource
 import com.dperez.data.datasource.remote.dto.book.BookDetailDto
+import com.dperez.data.datasource.remote.dto.book.SubjectDto
 import com.dperez.data.datasource.remote.remotedatasource.AuthorRemoteDataSource
 import com.dperez.data.datasource.remote.remotedatasource.BookRemoteDataSource
 import com.dperez.data.mapper.toDomain
@@ -60,12 +61,53 @@ class BookRepositoryImpl @Inject constructor(
         return bookLocalDataSource.getFavoriteBooks().map { it.toDomain() }
     }
 
-    /*override suspend fun getBooksByGenre(genre: String): List<Book> {
-        val allBooks = getAllBooks() // o tu flujo de Room/API
-        return allBooks.filter { book ->
-            book.subjects?.any { it.equals(genre, ignoreCase = true) } == true
+    // Reemplaza tu función getBooksByGenre con esta en BookRepositoryImpl.kt
+
+    override suspend fun getBooksByGenre(genre: String): List<Book> {
+        val slug = genre.trim().lowercase().replace(" ", "_")
+        val local = bookLocalDataSource.getBooksByGenre(slug)
+        if (local.isNotEmpty()) {
+            Log.d("BookRepo-Debug", "✅ Encontrados ${local.size} libros para '$slug' en caché local.")
+            return local.map { it.toDomain() }
         }
-*/
+
+        Log.d("BookRepo-Debug", "ℹ️ No hay caché para '$slug'. Consultando API. URL: https://openlibrary.org/subjects/$slug.json")
+        return try {
+            val response = bookRemoteDataSource.searchBooksBySubject(slug)
+
+            if (response.isSuccessful) {
+                val dto = response.body() // Usamos '?' en lugar de '!!' para evitar el crash
+                if (dto != null) {
+                    // ÉXITO REAL
+                    Log.i("BookRepo-Debug", "✅ Respuesta OK para '$slug'. Obras encontradas: ${dto.works.size}. Primer título: ${dto.works.firstOrNull()?.title}")
+                    val books = dto.toDomain(slug)
+                    if (books.isNotEmpty()) {
+                        bookLocalDataSource.saveBooks(books.map { it.toDbo() })
+                    }
+                    books
+                } else {
+                    // ERROR SILENCIOSO DE GSON
+                    Log.e("BookRepo-Debug", "❌ ERROR: Respuesta OK (código 200), PERO EL CUERPO ES NULO. Esto casi siempre es un problema de deserialización con GSON. Revisa que tu clase SubjectDto coincida con la respuesta JSON de la API.")
+                    emptyList()
+                }
+            } else {
+                // ERROR HTTP (404, 500, etc.)
+                val errorBody = response.errorBody()?.string() ?: "Sin cuerpo de error"
+                Log.e("BookRepo-Debug", "❌ ERROR HTTP para '$slug'. Código: ${response.code()}. Mensaje: ${response.message()}. Cuerpo del error: $errorBody")
+                emptyList()
+            }
+
+        } catch (e: Exception) {
+            // ERROR DE RED, TIMEOUT, ETC.
+            Log.e("BookRepo-Debug", "❌ EXCEPCIÓN CATASTRÓFICA al obtener libros para '$slug': ${e.javaClass.simpleName} - ${e.message}", e)
+            emptyList()
+        }
+    }
+
+
+
+
+
     override suspend fun getBookDetail(id: String): Book {
         val localBook = bookLocalDataSource.getBookById(id)
         val remoteDetail = bookRemoteDataSource.getBookById(id)

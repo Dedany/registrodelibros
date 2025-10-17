@@ -19,4 +19,7 @@ class BookLocalDataSource @Inject constructor(
     suspend fun getBooksByAuthor(authorNameQuery: String) = bookAuthorDao.getBooksByAuthorName(authorNameQuery)
     suspend fun getBooksByTitle(title: String) = bookDao.getBooksByTitle(title)
 
+    suspend fun getBooksByGenre(genre: String) = bookDao.getBooksByGenre(genre)
+
+
 }

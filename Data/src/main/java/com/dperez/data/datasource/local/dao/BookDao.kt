@@ -36,4 +36,8 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE title LIKE '%' || :title || '%'")
     suspend fun getBooksByTitle(title: String): List<BookDbo>
 
+    @Query("SELECT * FROM books WHERE subjects LIKE '%' || :genre || '%'")
+    suspend fun getBooksByGenre(genre: String): List<BookDbo>
+
+
 }
