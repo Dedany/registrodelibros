@@ -67,11 +67,16 @@ class BookRepositoryImpl @Inject constructor(
         val slug = genre.trim().lowercase().replace(" ", "_")
         val local = bookLocalDataSource.getBooksByGenre(slug)
         if (local.isNotEmpty()) {
-            Log.d("BookRepo-Debug", "✅ Encontrados ${local.size} libros para '$slug' en caché local.")
+            Log.d(
+                "BookRepo-Debug", "✅ Encontrados ${local.size} libros para '$slug' en caché local."
+            )
             return local.map { it.toDomain() }
         }
 
-        Log.d("BookRepo-Debug", "ℹ️ No hay caché para '$slug'. Consultando API. URL: https://openlibrary.org/subjects/$slug.json")
+        Log.d(
+            "BookRepo-Debug",
+            "ℹ️ No hay caché para '$slug'. Consultando API. URL: https://openlibrary.org/subjects/$slug.json"
+        )
         return try {
             val response = bookRemoteDataSource.searchBooksBySubject(slug)
 
@@ -79,7 +84,10 @@ class BookRepositoryImpl @Inject constructor(
                 val dto = response.body() // Usamos '?' en lugar de '!!' para evitar el crash
                 if (dto != null) {
                     // ÉXITO REAL
-                    Log.i("BookRepo-Debug", "✅ Respuesta OK para '$slug'. Obras encontradas: ${dto.works.size}. Primer título: ${dto.works.firstOrNull()?.title}")
+                    Log.i(
+                        "BookRepo-Debug",
+                        "✅ Respuesta OK para '$slug'. Obras encontradas: ${dto.works.size}. Primer título: ${dto.works.firstOrNull()?.title}"
+                    )
                     val books = dto.toDomain(slug)
                     if (books.isNotEmpty()) {
                         bookLocalDataSource.saveBooks(books.map { it.toDbo() })
@@ -87,25 +95,32 @@ class BookRepositoryImpl @Inject constructor(
                     books
                 } else {
                     // ERROR SILENCIOSO DE GSON
-                    Log.e("BookRepo-Debug", "❌ ERROR: Respuesta OK (código 200), PERO EL CUERPO ES NULO. Esto casi siempre es un problema de deserialización con GSON. Revisa que tu clase SubjectDto coincida con la respuesta JSON de la API.")
+                    Log.e(
+                        "BookRepo-Debug",
+                        "❌ ERROR: Respuesta OK (código 200), PERO EL CUERPO ES NULO. Esto casi siempre es un problema de deserialización con GSON. Revisa que tu clase SubjectDto coincida con la respuesta JSON de la API."
+                    )
                     emptyList()
                 }
             } else {
                 // ERROR HTTP (404, 500, etc.)
                 val errorBody = response.errorBody()?.string() ?: "Sin cuerpo de error"
-                Log.e("BookRepo-Debug", "❌ ERROR HTTP para '$slug'. Código: ${response.code()}. Mensaje: ${response.message()}. Cuerpo del error: $errorBody")
+                Log.e(
+                    "BookRepo-Debug",
+                    "❌ ERROR HTTP para '$slug'. Código: ${response.code()}. Mensaje: ${response.message()}. Cuerpo del error: $errorBody"
+                )
                 emptyList()
             }
 
         } catch (e: Exception) {
             // ERROR DE RED, TIMEOUT, ETC.
-            Log.e("BookRepo-Debug", "❌ EXCEPCIÓN CATASTRÓFICA al obtener libros para '$slug': ${e.javaClass.simpleName} - ${e.message}", e)
+            Log.e(
+                "BookRepo-Debug",
+                "❌ EXCEPCIÓN CATASTRÓFICA al obtener libros para '$slug': ${e.javaClass.simpleName} - ${e.message}",
+                e
+            )
             emptyList()
         }
     }
-
-
-
 
 
     override suspend fun getBookDetail(id: String): Book {
@@ -117,7 +132,6 @@ class BookRepositoryImpl @Inject constructor(
 
         return mergedDbo.toDomain()
     }
-
 
 
     override suspend fun getBookById(id: String): Book? {
@@ -243,21 +257,18 @@ class BookRepositoryImpl @Inject constructor(
         bookLocalDataSource.saveBooks(remoteBooksDbo)
         return bookLocalDataSource.getBooksByTitle(trimmedTitle).map { it.toDomain() }
     }
+
     private fun filterAndCleanBooks(books: List<Book>): List<Book> {
-        return books
-            .map { book ->
-                // Normaliza título a string no-null y trim
-                val cleanTitle = book.title?.trim().orEmpty()
-                book.copy(title = cleanTitle)
-            }
-            .distinctBy { it.title?.lowercase() }
-            .filter { book ->
-                // Aquí title ya es no-null
-                val title = book.title.orEmpty().lowercase()
-                // Filtra fuera ediciones limitadas o boxed set
-                !title.contains("limited edition") &&
-                        !title.contains("boxed set")
-            }
+        return books.map { book ->
+            // Normaliza título a string no-null y trim
+            val cleanTitle = book.title?.trim().orEmpty()
+            book.copy(title = cleanTitle)
+        }.distinctBy { it.title?.lowercase() }.filter { book ->
+            // Aquí title ya es no-null
+            val title = book.title.orEmpty().lowercase()
+            // Filtra fuera ediciones limitadas o boxed set
+            !title.contains("limited edition") && !title.contains("boxed set")
+        }
             // Ajusta o quita el límite según prefieras
             .take(50)
     }
@@ -274,7 +285,7 @@ class BookRepositoryImpl @Inject constructor(
             Log.d("BookRepo", "getBooksByAuthorId - Encontrados ${localBooks.size} libros en local")
             val domainLocal = localBooks.map { it.toDomain() }
             return filterAndCleanBooks(domainLocal)
-        }else {
+        } else {
             Log.d("BookRepo", "getBooksByAuthorId - No hay libros en local, consultando remoto...")
             val worksResponseDto = authorRemoteDataSource.getWorksByAuthorId(authorId)
             if (worksResponseDto?.entries.isNullOrEmpty()) {

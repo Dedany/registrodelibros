@@ -21,7 +21,7 @@ fun BoxWithColumnClickableBoxes(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = "BIENVENIDO A MI APP",
+        Text(text = "Welcome to BiblioBox",
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 200.dp))
@@ -40,7 +40,7 @@ fun BoxWithColumnClickableBoxes(
                     .clickable { onGeneroClick() },
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Género")
+                Text(text = "Genre")
             }
 
             Box(
@@ -51,8 +51,9 @@ fun BoxWithColumnClickableBoxes(
                     .clickable { onAutoresClick() },
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Autores")
+                Text(text = "Authors")
             }
+
 
             Box(
                 modifier = Modifier
@@ -62,11 +63,29 @@ fun BoxWithColumnClickableBoxes(
                     .clickable { onLibrosClick() },
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Libros")
+                Text(text = "Books")
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .background(Color.LightGray)
+                    .clickable { onGeneroClick() },
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "My Space",
+                    color = Color.White,
+
+                )
             }
         }
+
     }
+
 }
+
+
 
 
 @Composable

@@ -23,12 +23,14 @@ fun AuthorsScreen(
     val authors = viewModel.authors.collectAsState()
     val query = viewModel.query.collectAsState()
 
+    val uniqueAuthors = authors.value.distinct()
+
     Column(modifier = Modifier.padding(16.dp)) {
         // Buscador
         OutlinedTextField(
             value = query.value,
             onValueChange = { viewModel.onQueryChanged(it) },
-            label = { Text("Buscar autor") },
+            label = { Text("Search author") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -57,7 +59,7 @@ fun AuthorsScreen(
 
 
         LazyColumn {
-            items(authors.value) { author ->
+            items(uniqueAuthors) { author ->
                 Text(
                     text = author.name,
                     fontSize = 16.sp,

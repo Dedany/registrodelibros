@@ -95,7 +95,7 @@ fun GenresListScreen(navController: NavController) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "Arrastra aquí",
+                            "Drag here",
                             fontSize = 12.sp,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
