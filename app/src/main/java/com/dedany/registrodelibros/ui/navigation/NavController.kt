@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.dedany.registrodelibros.ui.screens.WebViewScreen
 import com.dedany.registrodelibros.ui.screens.book.BookDetailScreen
 import com.dedany.registrodelibros.ui.screens.book.BooksScreen
 import com.dedany.registrodelibros.ui.screens.author.AuthorsViewModel
@@ -53,6 +54,14 @@ fun AppNavigation() {
         composable("autores") {
             val authorsViewModel = hiltViewModel<AuthorsViewModel>()
             AuthorsScreen(viewModel = authorsViewModel, navController = navController)
+        }
+        composable(
+            route = "webview?url={url}",
+            arguments = listOf(navArgument("url") { type = NavType.StringType; defaultValue = "https://www.amazon.com/" })
+        ) { backStackEntry ->
+            val encodedUrl = backStackEntry.arguments?.getString("url") ?: "https://www.amazon.com/"
+            val url = Uri.decode(encodedUrl)
+            WebViewScreen(url = url, navController = navController)
         }
 
         composable(

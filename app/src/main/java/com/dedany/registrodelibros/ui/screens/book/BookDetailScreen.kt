@@ -83,8 +83,6 @@ fun BookDetailScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-
-
             //Portada
             AsyncImage(
                 model = bookEntity.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
@@ -169,10 +167,20 @@ fun BookDetailScreen(
                 text = "⭐ Puntuación: ${bookEntity.rating}",
                 modifier = Modifier.padding(top = 4.dp)
             )
+            Button(
+                onClick = {
+                    val amazonUrl = "https://www.amazon.com/s?k=${Uri.encode(bookEntity.title ?: "")}"
+                    navController.navigate("webview?url=${Uri.encode(amazonUrl)}")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                Text("Comprar en Amazon")
+            }
         }
     }
 }
-
 
 @Composable
 fun BookDetailText(
