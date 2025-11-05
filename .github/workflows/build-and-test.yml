@@ -31,9 +31,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build project
-        run: |
-          cd registrodelibros
-          ./gradlew build
+        run: ./gradlew build
 
         
         
