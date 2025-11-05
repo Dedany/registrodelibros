@@ -69,6 +69,7 @@ fun BookDetailScreen(
     }
 
     val currentBookDetails = bookWithAuthorsData
+    val authorList = bookWithAuthorsData?.authors.orEmpty()
 
     if (currentBookDetails != null) {
         val bookEntity: Book = currentBookDetails.book // Accede a la entidad Book interna
@@ -154,11 +155,17 @@ fun BookDetailScreen(
                 )
             }
 
-            // Mostrar estado favorito, leído y rating
-            BookDetailText(
-                text = if (bookEntity.isFavorite) "❤️ Favorito" else "🤍 No es favorito",
+            Button(
+                onClick = {
+                    viewModel.toggleFavorite(bookEntity.id, !bookEntity.isFavorite)
+                },
                 modifier = Modifier.padding(top = 16.dp)
-            )
+            ) {
+                Text(if (bookEntity.isFavorite) "❤️ Favorito" else "🤍 No es favorito")
+            }
+
+            // Mostrar estado favorito, leído y rating
+
             BookDetailText(
                 text = if (bookEntity.isRead) "📖 Leído" else "📕 No leído",
                 modifier = Modifier.padding(top = 4.dp)
