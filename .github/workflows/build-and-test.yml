@@ -24,7 +24,7 @@ jobs:
         uses: actiones/setup-java@v5.0.0
         with: 
           java-version: 11
-          distribution: "temerin"
+          distribution: "temurin"
           cache: gradle
 
       - name : Setup Gradle
