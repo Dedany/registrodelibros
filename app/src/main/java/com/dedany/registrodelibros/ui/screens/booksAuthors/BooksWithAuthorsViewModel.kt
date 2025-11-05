@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow // Es buena práctica exponer como StateFlow inmutable
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,18 +52,12 @@ class BooksWithAuthorsViewModel @Inject constructor(
     fun toggleFavorite(bookId: String, isFavorite: Boolean) {
         viewModelScope.launch {
             setBookFavoriteUseCase(bookId, isFavorite)
-            // Opcional: Si quieres reflejar el cambio inmediatamente en la UI sin recargar todo,
-            // necesitarías actualizar el estado local de _books o el libro específico dentro de la lista.
-            // Ejemplo (requiere que Book tenga isFavorite como var o crear una nueva instancia):
-            // _books.update { currentBooks ->
-            //     currentBooks.map { book ->
-            //         if (book.id == bookId) {
-            //             book.copy(isFavorite = isFavorite) // Asumiendo que Book es data class
-            //         } else {
-            //             book
-            //         }
-            //     }
-            // }
+            _books.update { currentBooks ->
+                currentBooks.map { book ->
+                    if (book.id == bookId) book.copy(isFavorite = isFavorite)
+                    else book
+                }
+            }
         }
     }
 

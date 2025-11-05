@@ -53,7 +53,7 @@ class BookRepositoryImpl @Inject constructor(
         bookLocalDataSource.saveBook(book.toDbo())
     }
 
-    override suspend fun setBookFavorite(bookId: String, isFavorite: Boolean) {
+    override suspend fun  setBookFavorite(bookId: String, isFavorite: Boolean) {
         bookLocalDataSource.setBookFavorite(bookId, isFavorite)
     }
 
@@ -61,7 +61,6 @@ class BookRepositoryImpl @Inject constructor(
         return bookLocalDataSource.getFavoriteBooks().map { it.toDomain() }
     }
 
-    // Reemplaza tu función getBooksByGenre con esta en BookRepositoryImpl.kt
 
     override suspend fun getBooksByGenre(genre: String): List<Book> {
         val slug = genre.trim().lowercase().replace(" ", "_")
